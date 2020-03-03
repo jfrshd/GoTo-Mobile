@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "647659783969",
+    "firebase_url": "https://goto-f386e.firebaseio.com",
+    "project_id": "goto-f386e",
+    "storage_bucket": "goto-f386e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:647659783969:android:7b392f88fca4ac1afea060",
+        "android_client_info": {
+          "package_name": "com.ibdaa.gotomobile"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "647659783969-s5ocaqgolkb0g6so24u6hog9v9cai3o9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAHTP9qrgI-l5UjMG6iBSdWheUxLv044nc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "647659783969-s5ocaqgolkb0g6so24u6hog9v9cai3o9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
