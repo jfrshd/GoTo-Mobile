@@ -31,6 +31,7 @@ dependencies:
   share: ^0.6.3+5
   http: ^0.12.0+4
   cached_network_image: ^2.0.0
+  esys_flutter_share: ^1.0.2
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^0.1.2
@@ -61,8 +62,6 @@ flutter:
   assets:
     - assets/
     - assets/images/
-    - assets/categories_icons/
-    - assets/regions_icons/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

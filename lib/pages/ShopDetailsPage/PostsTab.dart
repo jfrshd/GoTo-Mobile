@@ -31,10 +31,8 @@ class _PostsTabState extends State<PostsTab> {
   @override
   Widget build(BuildContext context) {
     if (_error) {
-      return ErrorPage(null, Constants.branchesError, _loadPosts);
+      return ErrorPage(null, Constants.postsError, _loadPosts);
     }
-    print("_posts");
-    print(_posts);
     return Container(
       color: Colors.grey[100],
       child: _posts.length == 0
@@ -54,10 +52,11 @@ class _PostsTabState extends State<PostsTab> {
       _error = false;
     });
     getShopPosts(shopID: widget.shop.id).then((response) {
-      final parsed = Map<String, dynamic>.from(json.decode(response.body));
-      if (parsed["success"] == "true") {
-        final posts =
-            parsed['posts'].map<Post>((json) => Post.fromJson(json)).toList();
+		final parsed = Map<String, dynamic>.from(json.decode(response.body));
+      if (parsed["status"] == "success") {
+        final posts = parsed['posts']["data"]
+            .map<Post>((json) => Post.fromJson(json))
+            .toList();
 
         setState(() {
           _error = false;

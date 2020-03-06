@@ -1,5 +1,5 @@
 class API {
-  static String serverAddress = "http://192.168.1.2:8000";
+  static String serverAddress = "http://192.168.1.15:8000";
 
 //  static String serverAddress = "http://10.0.2.2:8000"; // Android
 //  static String serverAddress = "http://localhost:8000"; // iOS
@@ -8,7 +8,8 @@ class API {
   static String regionsAPI = serverAddress + "/api/regions";
   static String postsAPI = serverAddress + "/api/posts";
   static String shopsAPI = serverAddress + "/api/shops";
-  static String branchesAPI = serverAddress + "/api/branches";
+  static String branchesAPI = serverAddress + "/api/shop-branches";
+  static String brancssshesAPI = serverAddress + "/api/shop-posts";
 
   static String updateSelectedCategories =
       serverAddress + "/api/accounts/update-categories";

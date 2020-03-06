@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gotomobile/models/post.dart';
-import 'package:gotomobile/pages/CompanyDetailsPage/CompanyDetailsPage.dart';
+import 'package:gotomobile/pages/ShopDetailsPage/ShopDetailsPage.dart';
 
 import '../../api.dart';
 
@@ -17,7 +17,10 @@ class PostHeader extends StatelessWidget {
       contentPadding: EdgeInsets.only(left: 16),
       dense: true,
       leading: Hero(
-          tag: "company" + index.toString(),
+          tag: "shop" +
+              index.toString() +
+              post.shopId.toString() +
+              post.id.toString(),
           child: Container(
               decoration: new BoxDecoration(
                 color: Colors.grey, // border color
@@ -32,27 +35,33 @@ class PostHeader extends StatelessWidget {
                     post.shop.logo.replaceFirst("public/", "")),
               ))),
       title: Hero(
-//          createRectTween: CompanyDetailsPage.createRectTween,
-          tag: "companyName" + index.toString(),
+//          createRectTween: shopDetailsPage.createRectTween,
+          tag: "shopName" +
+              index.toString() +
+              post.shopId.toString() +
+              post.id.toString(),
           child: new Material(
-            color: Colors.transparent,
-            child: Text(
-              post.shop.name,
-              style: TextStyle(
-                  fontSize: 20,
-                  fontFamily: "Roboto",
-                  color: Colors.black,
-                  decoration: TextDecoration.none,
-                  fontWeight: FontWeight.normal),
+              color: Colors.transparent,
+              child: Text(
+                  post.shop.name,
+                  style: TextStyle(
+                      fontSize: 20,
+                      fontFamily: "Roboto",
+                      color: Colors.black,
+                      decoration: TextDecoration.none,
+                      fontWeight: FontWeight.normal),
             ),
           )),
       subtitle: Hero(
-          tag: "companyCategory" + post.shopId.toString(),
-//          createRectTween: CompanyDetailsPage.createRectTween,
+          tag: "shopCategory" +
+              index.toString() +
+              post.shopId.toString() +
+              post.id.toString(),
+//          createRectTween: shopDetailsPage.createRectTween,
           child: Material(
               color: Colors.transparent,
               child: Text(
-                post.shopId.toString(),
+                  post.shopId.toString(),
 //                style: TextStyle(
 //                    fontSize: 12,
 //                    fontFamily: "Roboto",
@@ -93,9 +102,10 @@ class PostHeader extends StatelessWidget {
         Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (BuildContext context) => CompanyDetailsPage(
-                      heroTag: index.toString(),
-                      shop: post.shop,
+                builder: (BuildContext context) =>
+                    ShopDetailsPage(
+                        heroTag: index.toString(),
+                        shop: post.shop,
                     )));
 //        toggleSearch();
       },

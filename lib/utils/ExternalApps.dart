@@ -1,6 +1,15 @@
 import 'package:url_launcher/url_launcher.dart';
 
-class MapUtils {
+class ExternalApps {
+  static call(String phoneNumber) async {
+    final url = 'tel:' + phoneNumber;
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
   static openMap(double latitude, double longitude) async {
     String googleUrl =
         'https://www.google.com/maps/search/?api=1&query=$latitude,$longitude';

@@ -3,7 +3,9 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:gotomobile/models/post.dart';
+import 'package:gotomobile/pages/ErrorPage.dart';
 import 'package:gotomobile/services/postsService.dart';
+import 'package:gotomobile/utils/Constants.dart';
 import 'package:gotomobile/widgets/colorLoader/ColorLoader4.dart';
 import 'package:gotomobile/widgets/drawer/CustomDrawer.dart';
 import 'package:gotomobile/widgets/post/PostItem.dart';
@@ -14,12 +16,13 @@ class HomePage extends StatefulWidget {
 }
 
 class _MainPageState extends State<HomePage> {
-  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   ScrollController _scrollController = new ScrollController();
+  FocusNode _focusNode = FocusNode();
 
   bool _isSearch = false;
   bool _moreToLoad = true;
   bool _error = false;
+  bool _errorLoadingMore = false;
   bool _loadingPosts = false;
   int _currentpage = 1;
 
@@ -29,21 +32,36 @@ class _MainPageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+    _focusNode.addListener(() {
+      setState(() {
+        _isSearch = _focusNode.hasFocus;
+      });
+    });
     _scrollController.addListener(_scrollListener);
     if (_posts.length == 0) loadPosts();
   }
 
   @override
+  void dispose() {
+    _focusNode.dispose();
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     if (_error) {
-      return _createTryAgainPage();
+      return ErrorPage(_createAppBar(), Constants.postsError, loadPosts,
+          drawer: CustomDrawer());
     }
 
+    if (!_isSearch) {
+      _posts = _tmpAllPosts;
+    }
     return WillPopScope(
         onWillPop: _onWillPop,
         child: Scaffold(
           backgroundColor: Colors.grey[300],
-          key: _scaffoldKey,
           drawer: CustomDrawer(),
           appBar: _createAppBar(),
           body: _posts.length == 0
@@ -53,16 +71,21 @@ class _MainPageState extends State<HomePage> {
                       color2: Colors.blue[300],
                       color3: Colors.blue[100]),
                 )
-              : Column(children: <Widget>[
-                  Expanded(
-                    child: ListView.builder(
-                      controller: _scrollController,
-                      itemCount: _posts.length + 1,
-                      itemBuilder: (BuildContext context, int index) {
-                        if (index == _posts.length) {
-                          return null;
-                          return (_moreToLoad && !_isSearch)
-                              ? Center(
+              : GestureDetector(
+                  onTap: () {
+//                    FocusScopeNode currentFocus = FocusScope.of(context);
+                    _focusNode.unfocus();
+                  },
+                  child: Column(children: <Widget>[
+                    Expanded(
+                      child: ListView.builder(
+                        controller: _scrollController,
+                        itemCount: _posts.length + 1,
+                        itemBuilder: (BuildContext context, int index) {
+                          if (index == _posts.length) {
+                            if (_moreToLoad && !_isSearch) {
+                              if (_loadingPosts)
+                                return Center(
                                   child: Padding(
                                     padding:
                                         EdgeInsets.fromLTRB(10, 10, 10, 10),
@@ -72,121 +95,110 @@ class _MainPageState extends State<HomePage> {
                                         color2: Colors.blue[300],
                                         color3: Colors.blue[100]),
                                   ),
-                                )
-                              : Container();
-                        } else
-                          return PostItem(index, _posts[index], _toggleSearch);
-                      },
+                                );
+                              else if (_errorLoadingMore)
+                                return Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Center(
+                                      child:
+                                          Text(Constants.postsPaginationError)),
+                                );
+                            }
+                            return Container();
+                          } else
+                            return PostItem(
+                                index, _posts[index], _toggleSearch);
+                        },
+                      ),
                     ),
-                  ),
-                ]),
+                  ]),
+                ),
         ));
   }
 
   AppBar _createAppBar() {
-    return _isSearch
-        ? AppBar(
-            automaticallyImplyLeading: false,
-            centerTitle: true,
-            actions: <Widget>[
-              Expanded(
-                  child: Padding(
-                      padding: EdgeInsets.fromLTRB(10, 0, 0, 0),
-                      child: Row(
-                        children: <Widget>[
-                          Icon(Icons.search),
-                          Expanded(
-                              child: Padding(
-                                  padding: EdgeInsets.fromLTRB(15, 0, 15, 0),
-                                  child: TextField(
-                                    autofocus: true,
-                                    decoration: new InputDecoration(
-                                        hintText: "Company Name",
-                                        hintStyle: TextStyle(
-                                            fontSize: 20,
-                                            color: Color(0x88FFFFFF)),
-                                        labelStyle: new TextStyle(
-                                            color: const Color(0xFF424242)),
-                                        border: InputBorder.none),
-                                    // decoration: InputDecoration(border: OutlineInputBorder(borderSide: BorderSide(style: BorderStyle.solid))),
-                                    style: TextStyle(
-                                        fontSize: 20, color: Colors.white),
-                                    onChanged: (text) {
-                                      setState(() {
-                                        _tmpAllPosts = []..addAll(_posts);
-                                        _posts.where((post) => post.shop.name
-                                            .toLowerCase()
-                                            .contains(text.toLowerCase()));
-                                      });
-                                    },
-                                  ))),
-                          IconButton(
-                              icon: Icon(Icons.close),
-                              onPressed: () {
-                                _toggleSearch();
-                              }),
-                        ],
-                      )))
-            ],
-          )
-        : AppBar(
-            automaticallyImplyLeading: true,
-            centerTitle: true,
-            title: Text("GoTo"),
-            actions: <Widget>[
-              IconButton(
-                icon: Icon(Icons.search),
-                onPressed: () {
-                  setState(() {
-                    _isSearch = true;
-                  });
-                },
-              )
-            ],
-          );
-  }
-
-  Widget _createTryAgainPage() {
-    return Scaffold(
-      appBar: _createAppBar(),
-      drawer: CustomDrawer(),
-      body: !_loadingPosts
-          ? Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                  Center(
-                      child: Text(
-                    "Please check your internet connection",
-                  )),
-                  RaisedButton(
-                    child: Text("Try Again"),
-                    onPressed: () {
-                      loadPosts();
-                      setState(() {
-                        _loadingPosts = true;
-                      });
-                    },
-                  )
-                ])
-          : Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                  Column(
-                    children: <Widget>[
-                      Container(),
-                      ColorLoader4(
-                          color1: Colors.blue,
-                          color2: Colors.blue[300],
-                          color3: Colors.blue[100]),
-                    ],
-                  )
-                ]),
+    return AppBar(
+      automaticallyImplyLeading: true,
+      centerTitle: true,
+      actions: <Widget>[
+        Expanded(
+            flex: 1,
+            child: Padding(
+                padding: EdgeInsets.only(left: 50),
+                child: Row(
+                  children: <Widget>[
+                    Expanded(
+                        child: Padding(
+                            padding: EdgeInsets.fromLTRB(15, 0, 15, 0),
+                            child: TextField(
+                              cursorColor: Colors.grey,
+                              focusNode: _focusNode,
+                              textAlign:
+                                  _isSearch ? TextAlign.left : TextAlign.center,
+                              decoration: !_isSearch
+                                  ? InputDecoration(
+//                                      hintText: "GoTo",
+                                      hintText: "Search",
+                                      hintStyle: TextStyle(
+                                          fontSize: 20,
+                                          color: Color(0x88FFFFFF)),
+                                      labelStyle: new TextStyle(
+                                          color: Color(0xFF424242)),
+                                      border: InputBorder.none)
+                                  : InputDecoration(),
+                              // decoration: InputDecoration(border: OutlineInputBorder(borderSide: BorderSide(style: BorderStyle.solid))),
+                              style:
+                                  TextStyle(fontSize: 20, color: Colors.white),
+                              onChanged: (text) {
+                                setState(() {
+                                  // TODO: show text no results found
+                                  if (text == '') {
+                                    _posts = _tmpAllPosts;
+                                    return;
+                                  } else if (_posts.length == 0) {
+                                    _posts = _tmpAllPosts;
+                                  }
+                                  _posts = _posts
+                                      .where((post) =>
+                                          post.shop.name
+                                              .toLowerCase()
+                                              .contains(text.toLowerCase()) ||
+                                          post.description
+                                              .toLowerCase()
+                                              .contains(text.toLowerCase()))
+                                      .toList();
+                                });
+                              },
+                            ))),
+                  ],
+                ))),
+        IconButton(
+          icon: Icon(
+            Icons.filter_list,
+            color: Colors.white,
+          ),
+          onPressed: () {},
+        ),
+      ],
     );
+//         AppBar(
+//            automaticallyImplyLeading: true,
+//            centerTitle: true,
+//            title: Text("GoTo"),
+//            actions: <Widget>[
+//              IconButton(
+//                icon: Icon(Icons.search),
+//                onPressed: () {
+//                  setState(() {
+//                    _isSearch = true;
+//                  });
+//                },
+//              )
+//            ],
+//          );
   }
 
-  loadPosts() {
+  loadPosts({bool error}) {
     setState(() {
       _error = false;
       _loadingPosts = true;
@@ -194,17 +206,17 @@ class _MainPageState extends State<HomePage> {
 
     getPosts(page: _currentpage).then((response) {
       final parsed = Map<String, dynamic>.from(json.decode(response.body));
-      if (parsed["success"] == "true") {
+      if (parsed["status"] == "success") {
         final posts = parsed['posts']['data']
             .map<Post>((json) => Post.fromJson(json))
             .toList();
-        print("posts");
-        print(posts.runtimeType);
-        print(posts);
+
         setState(() {
           _error = false;
+          _errorLoadingMore = false;
           _loadingPosts = false;
           _posts.addAll(posts);
+          _tmpAllPosts.addAll(posts);
           _currentpage += 1;
           if (_currentpage > parsed['posts']["last_page"]) _moreToLoad = false;
         });
@@ -213,8 +225,12 @@ class _MainPageState extends State<HomePage> {
       print("getPosts error: ");
       print(e);
       setState(() {
-        _error = true;
         _loadingPosts = false;
+        if (_currentpage == 1)
+          _error = true;
+        else {
+          _errorLoadingMore = true;
+        }
       });
     });
   }
@@ -233,7 +249,6 @@ class _MainPageState extends State<HomePage> {
       print("reach the bottom");
       //TODO: Check if it's better to continuously load pages or wait for scroll.
       if (!_loadingPosts && !_isSearch) {
-        _loadingPosts = true;
         if (_moreToLoad) {
           loadPosts();
         }

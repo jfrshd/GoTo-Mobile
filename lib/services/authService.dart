@@ -55,20 +55,16 @@ Future<String> updateFirebaseToken(String firebaseToken) async {
       "firebase_token": firebaseToken,
     }).timeout(const Duration(seconds: 2));
 
-    if (response.statusCode == 200) {
-      final parsed = Map<String, dynamic>.from(json.decode(response.body));
-      if (parsed.containsKey("success")) {
-        int accountId = parsed["account_id"];
-        await SharedPreferencesHelper.setInt(Constants.accountID, accountId);
-        return 'success';
-      } else {
-        print(parsed["error"]);
-        return 'FirebaseToken already exist!';
-      }
-    } else if (response.statusCode == 401) {
-      print("Error fetching token");
+    final parsed = Map<String, dynamic>.from(json.decode(response.body));
+    if (parsed['status'] == 'success') {
+      await SharedPreferencesHelper.setInt(
+          Constants.accountID, parsed["account_id"]);
+      return 'success';
+    } else if (parsed['status'] == 'fail') {
+      await SharedPreferencesHelper.setInt(
+          Constants.accountID, parsed["account_id"]);
+      return 'FirebaseToken already exist!';
     }
-    return "";
   } on Exception catch (e) {
     print('getAuthToken error: ');
     print(e);

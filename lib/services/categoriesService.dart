@@ -17,14 +17,16 @@ Future<http.Response> getCategories() async {
 Future<http.Response> updateSelectedCategories(List<int> ids) async {
   String authToken = await getAuthToken();
 
-  return http
-      .post(API.updateSelectedCategories, headers: {
-        "Authorization": authToken
-      }, body: {
-        "account_id":
-            (await SharedPreferencesHelper.getInt(Constants.accountID))
-                .toString(),
-        "category_ids[]": ids.toString(),
-      })
-      .timeout(Duration(seconds: 2));
+  print({
+    "account_id":
+        (await SharedPreferencesHelper.getInt(Constants.accountID)).toString(),
+    "category_ids[]": ids.toString(),
+  });
+  return http.post(API.updateSelectedCategories, headers: {
+    "Authorization": authToken
+  }, body: {
+    "account_id":
+        (await SharedPreferencesHelper.getInt(Constants.accountID)).toString(),
+    "category_ids[]": ids.toString(),
+  }).timeout(Duration(seconds: 2));
 }

@@ -1,25 +1,22 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:gotomobile/models/shop.dart';
-import 'package:gotomobile/pages/CompanyDetailsPage/CompanyDetailsHeader.dart';
-import 'package:gotomobile/services/shopsService.dart';
 
 import 'AboutTab.dart';
 import 'BranchesTab.dart';
 import 'PostsTab.dart';
+import 'ShopDetailsHeader.dart';
 
-class CompanyDetailsPage extends StatefulWidget {
+class ShopDetailsPage extends StatefulWidget {
   final String heroTag;
   final Shop shop;
 
-  CompanyDetailsPage({this.heroTag, this.shop});
+  ShopDetailsPage({this.heroTag, this.shop});
 
   @override
   _CompanyDetailsPageState createState() => _CompanyDetailsPageState();
 }
 
-class _CompanyDetailsPageState extends State<CompanyDetailsPage>
+class _CompanyDetailsPageState extends State<ShopDetailsPage>
     with TickerProviderStateMixin {
   List<Tab> tabList = List();
 
@@ -36,7 +33,8 @@ class _CompanyDetailsPageState extends State<CompanyDetailsPage>
     tabList.add(new Tab(
       text: 'Posts',
     ));
-    _tabController = new TabController(vsync: this, length: tabList.length);
+    _tabController =
+        new TabController(initialIndex: 2, vsync: this, length: tabList.length);
 
     super.initState();
   }
@@ -57,13 +55,10 @@ class _CompanyDetailsPageState extends State<CompanyDetailsPage>
         child: Column(
 //        padding: EdgeInsets.all(10),
             children: <Widget>[
-              CompanyDetailsHeader(
+              ShopDetailsHeader(
                 shop: widget.shop,
                 heroTag: widget.heroTag,
               ),
-//              _tabController == null
-//                  ? null
-//                  :
               Column(
                 children: <Widget>[
                   Container(
@@ -97,12 +92,12 @@ class _CompanyDetailsPageState extends State<CompanyDetailsPage>
   Widget _getPage(Tab tab) {
     switch (tab.text) {
       case 'About':
-        return AboutTab();
+        return AboutTab(widget.shop.about);
       case 'Branches':
         return BranchesTab(widget.shop.id);
       case 'Posts':
         return PostsTab(widget.shop);
     }
-    return AboutTab();
+    return AboutTab(widget.shop.about);
   }
 }

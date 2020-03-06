@@ -57,7 +57,7 @@ class _BranchesTabState extends State<BranchesTab> {
     });
     getShopBranches(widget.shopID).then((response) {
       final parsed = Map<String, dynamic>.from(json.decode(response.body));
-      if (parsed["success"] == "true") {
+      if (parsed["status"] == "success") {
         final branches = parsed['branches']
             .map<Branch>((json) => Branch.fromJson(json))
             .toList();

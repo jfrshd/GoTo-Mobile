@@ -6,6 +6,6 @@ class Routes {
   static String homePageRoute = "/Home";
   static String fliersPageRoute = "/Fliers";
   static String saleDetailsRoute = "/SaleDetails";
-  static String companyDetailsRoute = "/CompanyDetails";
+  static String shopDetailsRoute = "/ShopDetails";
   static String aboutUs = "/AboutUs";
 }

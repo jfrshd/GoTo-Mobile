@@ -31,7 +31,7 @@ class PostItem extends StatelessWidget {
                 : Padding(
                     padding: EdgeInsets.only(bottom: 10),
                     child: PostBodyImages(
-                        companyName: post.shop.name, images: post.images)),
+                        shopName: post.shop.name, images: post.images)),
           ],
         ));
   }

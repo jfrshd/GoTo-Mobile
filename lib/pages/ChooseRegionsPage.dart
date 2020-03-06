@@ -13,24 +13,25 @@ import '../api.dart';
 import '../routes.dart';
 import 'ErrorPage.dart';
 
-class ChooseLocationsPage extends StatefulWidget {
+class ChooseRegionsPage extends StatefulWidget {
   @override
-  _ChooseLocationsPageState createState() => _ChooseLocationsPageState();
+  _ChooseRegionsPageState createState() => _ChooseRegionsPageState();
 }
 
-class _ChooseLocationsPageState extends State<ChooseLocationsPage> {
-  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+class _ChooseRegionsPageState extends State<ChooseRegionsPage> {
+    final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<
+        ScaffoldState>();
 
-  bool _isFirstTime;
-  bool _error = false;
-  bool _loadingRegions = false;
+    bool _isFirstLaunch = true;
+    bool _error = false;
+    bool _loadingRegions = false;
 
-  static List<Region> _regions = List<Region>();
+    static List<Region> _regions = List<Region>();
 
-  void initState() {
-    super.initState();
-    if (_regions.length == 0) loadRegions();
-  }
+    void initState() {
+        super.initState();
+        if (_regions.length == 0) loadRegions();
+    }
 
   AppBar createAppBar() {
     return AppBar(
@@ -67,12 +68,12 @@ class _ChooseLocationsPageState extends State<ChooseLocationsPage> {
 
   @override
   Widget build(BuildContext context) {
-    if (_isFirstTime == null) {
-      checkFirstTime();
-    }
-    if (_error) {
-      return ErrorPage(createAppBar(), Constants.regionsError, loadRegions);
-    }
+      if (_isFirstLaunch) {
+          checkFirstTime();
+      }
+      if (_error) {
+          return ErrorPage(createAppBar(), Constants.regionsError, loadRegions);
+      }
 
     List<Widget> regionsImgWidgets = new List<Widget>();
     _regions.forEach((region) => regionsImgWidgets.add(SvgPicture.network(
@@ -181,16 +182,16 @@ class _ChooseLocationsPageState extends State<ChooseLocationsPage> {
     });
     getRegions().then((response) {
       final parsed = Map<String, dynamic>.from(json.decode(response.body));
-      if (parsed["success"] == "true") {
-        final regions = parsed['regions']
-            .map<Region>((json) => Region.fromJson(json))
-            .toList();
+      if (parsed["status"] == "success") {
+          final regions = parsed['regions']
+              .map<Region>((json) => Region.fromJson(json))
+              .toList();
 
-        setState(() {
-          _error = false;
-          _loadingRegions = false;
-          _regions = regions;
-        });
+          setState(() {
+              _error = false;
+              _loadingRegions = false;
+              _regions = regions;
+          });
       }
     }).catchError((e) {
       print("getRegions error: ");
@@ -208,16 +209,17 @@ class _ChooseLocationsPageState extends State<ChooseLocationsPage> {
             .map<int>((region) => region.id)
             .toList())
         .then((response) {
-      final parsed = Map<String, dynamic>.from(json.decode(response.body));
-      if (parsed["success"] == "true") {
-        if (_isFirstTime) {
-          Navigator.pushReplacementNamed(context, Routes.homePageRoute);
+        final parsed = Map<String, dynamic>.from(json.decode(response.body));
+        if (parsed["status"] == "success") {
+            if (_isFirstLaunch) {
+                setFirstTimeFalse();
+                Navigator.pushReplacementNamed(context, Routes.homePageRoute);
+            } else {
+                Navigator.pop(context);
+            }
         } else {
-          Navigator.pop(context);
+            showError("Failed");
         }
-      } else {
-        showError("Failed");
-      }
     }).catchError((e) {
       print("saveRegions error: ");
       print(e);
@@ -250,8 +252,8 @@ class _ChooseLocationsPageState extends State<ChooseLocationsPage> {
   }
 
   void checkFirstTime() async {
-    _isFirstTime =
-        await SharedPreferencesHelper.getBool(Constants.firstTimeCode);
+      _isFirstLaunch =
+      await SharedPreferencesHelper.getBool(Constants.firstTimeCode);
   }
 
   setFirstTimeFalse() async {

@@ -4,10 +4,10 @@ import 'package:gotomobile/pages/ImageViewerPage.dart';
 import '../../api.dart';
 
 class PostBodyImages extends StatelessWidget {
-  final String companyName;
+  final String shopName;
   final List<String> images;
 
-  PostBodyImages({this.companyName, this.images});
+  PostBodyImages({this.shopName, this.images});
 
   @override
   Widget build(BuildContext context) {
@@ -22,9 +22,9 @@ class PostBodyImages extends StatelessWidget {
                 context,
                 MaterialPageRoute(
                     builder: (context) => ImageViewerPage(
-                          companyName: companyName,
-                          images: images,
-                          selectedIndex: 0,
+						shopName: shopName,
+						images: images,
+						selectedIndex: 0,
                         )),
               );
             },
@@ -51,9 +51,9 @@ class PostBodyImages extends StatelessWidget {
                             context,
                             MaterialPageRoute(
                                 builder: (context) => ImageViewerPage(
-                                      companyName: companyName,
-                                      images: images,
-                                      selectedIndex: index,
+									shopName: shopName,
+									images: images,
+									selectedIndex: index,
                                     )),
                           );
                         },
