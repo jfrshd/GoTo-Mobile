@@ -77,7 +77,7 @@ class _ChooseRegionsPageState extends State<ChooseRegionsPage> {
 
     List<Widget> regionsImgWidgets = new List<Widget>();
     _regions.forEach((region) => regionsImgWidgets.add(SvgPicture.network(
-          API.serverAddress + "/" + region.svg.replaceFirst("public/", ""),
+          API.serverAddress + "/" + region.svg,
           width: MediaQuery.of(context).size.width / 2.5,
           height: MediaQuery.of(context).size.height / 2.5,
           color: region.selected ? region.color : Colors.black12,

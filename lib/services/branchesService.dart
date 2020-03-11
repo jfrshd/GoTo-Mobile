@@ -8,6 +8,6 @@ import 'authService.dart';
 Future<http.Response> getShopBranches(int shopID) async {
   String token = await getAuthToken();
 
-  return http.get(API.branchesAPI + "/" + shopID.toString(),
+  return http.get(API.shopBranches + "/" + shopID.toString(),
       headers: {"Authorization": token}).timeout(Duration(seconds: 2));
 }

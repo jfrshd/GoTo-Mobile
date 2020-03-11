@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gotomobile/models/shop.dart';
+import 'package:gotomobile/utils/Constants.dart';
+import 'package:gotomobile/utils/SharedPreferencesHelper.dart';
 
 import 'AboutTab.dart';
 import 'BranchesTab.dart';
@@ -18,86 +20,100 @@ class ShopDetailsPage extends StatefulWidget {
 
 class _CompanyDetailsPageState extends State<ShopDetailsPage>
     with TickerProviderStateMixin {
-  List<Tab> tabList = List();
+	final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<
+		ScaffoldState>();
 
-  TabController _tabController;
+	List<Tab> tabList = List();
 
-  @override
-  void initState() {
-    tabList.add(new Tab(
-      text: 'About',
-    ));
-    tabList.add(new Tab(
-      text: 'Branches',
-    ));
-    tabList.add(new Tab(
-      text: 'Posts',
-    ));
-    _tabController =
-        new TabController(initialIndex: 2, vsync: this, length: tabList.length);
+	TabController _tabController;
 
-    super.initState();
-  }
+	@override
+	void initState() {
+		tabList.add(new Tab(
+			text: 'About',
+		));
+		tabList.add(new Tab(
+			text: 'Branches',
+		));
+		tabList.add(new Tab(
+			text: 'Posts',
+		));
+		_tabController =
+		new TabController(initialIndex: 2, vsync: this, length: tabList.length);
 
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
-  }
+		super.initState();
+	}
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      resizeToAvoidBottomInset: false,
-      appBar: AppBar(),
-      body: SingleChildScrollView(
-        child: Column(
-//        padding: EdgeInsets.all(10),
-            children: <Widget>[
-              ShopDetailsHeader(
-                shop: widget.shop,
-                heroTag: widget.heroTag,
-              ),
-              Column(
-                children: <Widget>[
-                  Container(
-                    decoration: new BoxDecoration(
-//                              color: Theme.of(context).primaryColor
-                        color: Colors.white),
-                    child: new TabBar(
-                        controller: _tabController,
-                        indicatorColor: Theme.of(context).primaryColor,
-                        indicatorSize: TabBarIndicatorSize.tab,
-                        labelColor: Colors.black,
-                        tabs: tabList),
-                  ),
-                  Container(
-                    width: MediaQuery.of(context).size.width,
-                    height: MediaQuery.of(context).size.height - 250,
-                    child: TabBarView(
-                      controller: _tabController,
-                      children: tabList.map((Tab tab) {
-                        return _getPage(tab);
-                      }).toList(),
-                    ),
-                  ),
-                ],
-              ),
-            ]),
-      ),
-    );
-  }
+	@override
+	void dispose() {
+		_tabController.dispose();
+		super.dispose();
+	}
 
-  Widget _getPage(Tab tab) {
-    switch (tab.text) {
-      case 'About':
-        return AboutTab(widget.shop.about);
-      case 'Branches':
-        return BranchesTab(widget.shop.id);
-      case 'Posts':
-        return PostsTab(widget.shop);
-    }
-    return AboutTab(widget.shop.about);
-  }
+	Future<void> p() async {
+		final accountID =
+		(await SharedPreferencesHelper.getInt(Constants.accountID)).toString();
+		print("accountID");
+		print(accountID);
+	}
+
+	@override
+	Widget build(BuildContext context) {
+		return SafeArea(
+			child: Scaffold(
+				key: _scaffoldKey,
+				body: NestedScrollView(
+					headerSliverBuilder: (BuildContext context,
+						bool boxIsScrolled) {
+						return <Widget>[
+							SliverList(
+								delegate: SliverChildListDelegate([
+									ShopDetailsHeader(
+										widget.shop, widget.heroTag,
+										_scaffoldKey)
+								]),
+							)
+						];
+					},
+					body: DefaultTabController(
+						initialIndex: 2,
+						length: tabList.length,
+						child: Column(
+							children: <Widget>[
+								Container(
+									child: TabBar(
+										indicatorColor: Theme
+											.of(context)
+											.primaryColor,
+										indicatorSize: TabBarIndicatorSize.tab,
+										labelColor: Colors.black,
+										tabs: tabList),
+								),
+								Expanded(
+									child: TabBarView(
+//                    physics: NeverScrollableScrollPhysics(),
+										children: tabList.map((Tab tab) {
+											return _getPage(tab);
+										}).toList(),
+									),
+								)
+							],
+						),
+					),
+				),
+			),
+		);
+	}
+
+	Widget _getPage(Tab tab) {
+		switch (tab.text) {
+			case 'About':
+				return AboutTab(widget.shop.about);
+			case 'Branches':
+				return BranchesTab(widget.shop.id);
+			case 'Posts':
+				return PostsTab(widget.shop);
+		}
+		return AboutTab(widget.shop.about);
+	}
 }

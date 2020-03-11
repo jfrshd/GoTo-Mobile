@@ -12,7 +12,7 @@ Future<http.Response> getPosts({int page = 1}) async {
 Future<http.Response> getShopPosts({int shopID}) async {
   String token = await getAuthToken();
 
-  return http.get(API.brancssshesAPI + "/" + shopID.toString(),
+  return http.get(API.shopPosts + "/" + shopID.toString(),
       headers: {"Authorization": token}).timeout(Duration(seconds: 2));
 //	try {
 //		http.Response response = await

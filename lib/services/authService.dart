@@ -18,7 +18,7 @@ Future<String> getAuthToken() async {
   } else {
     print('Fetching token...');
     try {
-      http.Response authResponse = await http.post(API.signIn, body: {
+      http.Response authResponse = await http.post(API.login, body: {
         "email": Constants.authEmail,
         "password": Constants.authPassword,
         "remember_me": "true"

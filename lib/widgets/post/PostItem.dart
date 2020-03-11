@@ -6,9 +6,9 @@ import 'package:gotomobile/widgets/post/PostHeader.dart';
 class PostItem extends StatelessWidget {
   final int index;
   final Post post;
-  final Function toggleSearch;
+  final bool isHeaderClickable;
 
-  PostItem(this.index, this.post, this.toggleSearch);
+  PostItem(this.index, this.post, this.isHeaderClickable);
 
   @override
   Widget build(BuildContext context) {
@@ -19,20 +19,27 @@ class PostItem extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
-              child: PostHeader(index, post, toggleSearch),
-            ),
-            Padding(
-                padding: EdgeInsets.fromLTRB(16, 0, 16, 10),
-                child: Text(post.description)),
-            post.images.length == 0
-                ? Container()
-                : Padding(
-                    padding: EdgeInsets.only(bottom: 10),
-                    child: PostBodyImages(
-                        shopName: post.shop.name, images: post.images)),
-          ],
+			  Padding(
+				  padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+				  child: PostHeader(index, post, isHeaderClickable),
+			  ),
+			  Padding(
+				  padding: EdgeInsets.fromLTRB(16, 0, 16, 10),
+				  child: Text(
+					  post.description,
+					  style: TextStyle(fontFamily: 'CenturyGothic'),
+				  )),
+			  post.images.length == 0
+				  ? Container()
+				  : Padding(
+				  padding: EdgeInsets.only(bottom: 10),
+				  child: PostBodyImages(
+					  post.shop.name,
+					  post.description,
+					  post.images,
+				  ),
+			  ),
+		  ],
         ));
   }
 }

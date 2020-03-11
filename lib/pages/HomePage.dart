@@ -17,6 +17,9 @@ class HomePage extends StatefulWidget {
 
 class _MainPageState extends State<HomePage> {
   ScrollController _scrollController = new ScrollController();
+  TextEditingController _textEditingController = TextEditingController();
+  GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
+      GlobalKey<RefreshIndicatorState>();
   FocusNode _focusNode = FocusNode();
 
   bool _isSearch = false;
@@ -58,61 +61,82 @@ class _MainPageState extends State<HomePage> {
     if (!_isSearch) {
       _posts = _tmpAllPosts;
     }
+
     return WillPopScope(
         onWillPop: _onWillPop,
         child: Scaffold(
           backgroundColor: Colors.grey[300],
           drawer: CustomDrawer(),
           appBar: _createAppBar(),
-          body: _posts.length == 0
+          body: _posts.length == 0 && !_isSearch
               ? Center(
-                  child: ColorLoader4(
-                      color1: Colors.blue,
-                      color2: Colors.blue[300],
-                      color3: Colors.blue[100]),
-                )
+            child: ColorLoader4(
+                color1: Colors.blue,
+                color2: Colors.blue[300],
+                color3: Colors.blue[100]),
+          )
+              : _posts.length == 0 && _isSearch
+              ? Container(
+            child: Center(child: Text('No results found')),
+          )
               : GestureDetector(
-                  onTap: () {
+            onTap: () {
 //                    FocusScopeNode currentFocus = FocusScope.of(context);
-                    _focusNode.unfocus();
-                  },
-                  child: Column(children: <Widget>[
-                    Expanded(
-                      child: ListView.builder(
-                        controller: _scrollController,
-                        itemCount: _posts.length + 1,
-                        itemBuilder: (BuildContext context, int index) {
-                          if (index == _posts.length) {
-                            if (_moreToLoad && !_isSearch) {
-                              if (_loadingPosts)
-                                return Center(
-                                  child: Padding(
-                                    padding:
-                                        EdgeInsets.fromLTRB(10, 10, 10, 10),
-                                    //TODO: Choose ProgressIndicator
-                                    child: ColorLoader4(
-                                        color1: Colors.blue,
-                                        color2: Colors.blue[300],
-                                        color3: Colors.blue[100]),
-                                  ),
-                                );
-                              else if (_errorLoadingMore)
-                                return Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Center(
-                                      child:
-                                          Text(Constants.postsPaginationError)),
-                                );
-                            }
-                            return Container();
-                          } else
-                            return PostItem(
-                                index, _posts[index], _toggleSearch);
-                        },
-                      ),
-                    ),
-                  ]),
+              _focusNode.unfocus();
+            },
+            child: Column(children: <Widget>[
+//                        _isSearch
+//                            ? Expanded(
+//                                child: ListView.builder(
+//                                    itemCount: 100,
+//                                    itemBuilder: (context, index) {
+//                                      return Text(
+//                                          'Shop: ' + index.toString());
+//                                    }),
+//                              )
+//                            : Container(),
+              Expanded(
+                flex: 1,
+                child: RefreshIndicator(
+                  key: _refreshIndicatorKey,
+                  onRefresh: loadPosts,
+                  color: Theme
+                      .of(context)
+                      .primaryColor,
+                  child: ListView.builder(
+                    controller: _scrollController,
+                    itemCount: _posts.length + 1,
+                    itemBuilder: (BuildContext context, int index) {
+                      if (index == _posts.length) {
+                        if (_moreToLoad && !_isSearch) {
+                          if (_loadingPosts)
+                            return Center(
+                              child: Padding(
+                                padding: EdgeInsets.fromLTRB(
+                                    10, 10, 10, 10),
+                                child: ColorLoader4(
+                                    color1: Colors.blue,
+                                    color2: Colors.blue[300],
+                                    color3: Colors.blue[100]),
+                              ),
+                            );
+                          else if (_errorLoadingMore)
+                            return Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Center(
+                                  child: Text(Constants
+                                      .postsPaginationError)),
+                            );
+                        }
+                        return Container();
+                      } else
+                        return PostItem(index, _posts[index], true);
+                    },
+                  ),
                 ),
+              ),
+            ]),
+          ),
         ));
   }
 
@@ -131,24 +155,25 @@ class _MainPageState extends State<HomePage> {
                         child: Padding(
                             padding: EdgeInsets.fromLTRB(15, 0, 15, 0),
                             child: TextField(
+                              controller: _textEditingController,
                               cursorColor: Colors.grey,
                               focusNode: _focusNode,
                               textAlign:
-                                  _isSearch ? TextAlign.left : TextAlign.center,
+                              _isSearch ? TextAlign.left : TextAlign.center,
                               decoration: !_isSearch
                                   ? InputDecoration(
 //                                      hintText: "GoTo",
-                                      hintText: "Search",
-                                      hintStyle: TextStyle(
-                                          fontSize: 20,
-                                          color: Color(0x88FFFFFF)),
-                                      labelStyle: new TextStyle(
-                                          color: Color(0xFF424242)),
-                                      border: InputBorder.none)
+                                  hintText: "Search",
+                                  hintStyle: TextStyle(
+                                      fontSize: 20,
+                                      color: Color(0x88FFFFFF)),
+                                  labelStyle: new TextStyle(
+                                      color: Color(0xFF424242)),
+                                  border: InputBorder.none)
                                   : InputDecoration(),
                               // decoration: InputDecoration(border: OutlineInputBorder(borderSide: BorderSide(style: BorderStyle.solid))),
                               style:
-                                  TextStyle(fontSize: 20, color: Colors.white),
+                              TextStyle(fontSize: 20, color: Colors.white),
                               onChanged: (text) {
                                 setState(() {
                                   // TODO: show text no results found
@@ -160,16 +185,25 @@ class _MainPageState extends State<HomePage> {
                                   }
                                   _posts = _posts
                                       .where((post) =>
-                                          post.shop.name
-                                              .toLowerCase()
-                                              .contains(text.toLowerCase()) ||
-                                          post.description
-                                              .toLowerCase()
-                                              .contains(text.toLowerCase()))
+                                  post.shop.name
+                                      .toLowerCase()
+                                      .contains(text.toLowerCase()) ||
+                                      post.description
+                                          .toLowerCase()
+                                          .contains(text.toLowerCase()))
                                       .toList();
                                 });
                               },
                             ))),
+                    _isSearch
+                        ? IconButton(
+                      icon: Icon(
+                        Icons.close,
+                        color: Colors.white,
+                      ),
+                      onPressed: _toggleSearch,
+                    )
+                        : Container()
                   ],
                 ))),
         IconButton(
@@ -181,64 +215,56 @@ class _MainPageState extends State<HomePage> {
         ),
       ],
     );
-//         AppBar(
-//            automaticallyImplyLeading: true,
-//            centerTitle: true,
-//            title: Text("GoTo"),
-//            actions: <Widget>[
-//              IconButton(
-//                icon: Icon(Icons.search),
-//                onPressed: () {
-//                  setState(() {
-//                    _isSearch = true;
-//                  });
-//                },
-//              )
-//            ],
-//          );
   }
 
-  loadPosts({bool error}) {
-    setState(() {
-      _error = false;
-      _loadingPosts = true;
-    });
-
-    getPosts(page: _currentpage).then((response) {
-      final parsed = Map<String, dynamic>.from(json.decode(response.body));
-      if (parsed["status"] == "success") {
-        final posts = parsed['posts']['data']
-            .map<Post>((json) => Post.fromJson(json))
-            .toList();
-
-        setState(() {
-          _error = false;
-          _errorLoadingMore = false;
-          _loadingPosts = false;
-          _posts.addAll(posts);
-          _tmpAllPosts.addAll(posts);
-          _currentpage += 1;
-          if (_currentpage > parsed['posts']["last_page"]) _moreToLoad = false;
-        });
-      }
-    }).catchError((e) {
-      print("getPosts error: ");
-      print(e);
+  Future<void> loadPosts({bool error}) {
+    if (!_isSearch) {
+      _refreshIndicatorKey.currentState?.show();
       setState(() {
-        _loadingPosts = false;
-        if (_currentpage == 1)
-          _error = true;
-        else {
-          _errorLoadingMore = true;
-        }
+        _error = false;
+        _loadingPosts = true;
       });
-    });
+
+      return getPosts(page: _currentpage).then((response) {
+        final parsed = Map<String, dynamic>.from(json.decode(response.body));
+        if (parsed["status"] == "success") {
+          final posts = parsed['posts']['data']
+              .map<Post>((json) => Post.fromJson(json))
+              .toList();
+
+          setState(() {
+            _error = false;
+            _errorLoadingMore = false;
+            _loadingPosts = false;
+            _posts.addAll(posts);
+            _tmpAllPosts.addAll(posts);
+            _currentpage += 1;
+            if (_currentpage > parsed['posts']["last_page"])
+              _moreToLoad = false;
+          });
+        }
+      }).catchError((e) {
+        print("getPosts error: ");
+        print(e);
+        setState(() {
+          _loadingPosts = false;
+          if (_currentpage == 1)
+            _error = true;
+          else {
+            _errorLoadingMore = true;
+          }
+        });
+      });
+    } else {
+      return new Future(() {});
+    }
   }
 
   void _toggleSearch() {
-    _isSearch = false;
     setState(() {
-      _posts = []..addAll(_tmpAllPosts);
+      _isSearch = false;
+      _textEditingController.clear();
+      _focusNode.unfocus();
     });
   }
 

@@ -11,7 +11,7 @@ import 'Pages/ChooseCategoriesPage.dart';
 import 'firebase_notification_handler.dart';
 
 void main() {
-    runApp(MyApp());
+  runApp(MyApp());
 }
 
 /// This Widget is the main application widget.
@@ -42,37 +42,37 @@ class MyAppState extends State<MyApp> {
     return MaterialApp(
         theme: ThemeData(
           primaryColor: Colors.blue,
-          pageTransitionsTheme: PageTransitionsTheme(builders: {
-            TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
-            TargetPlatform.android: FadeUpwardsPageTransitionsBuilder(),
-          }),
-          // Define the default brightness and colors.
+            pageTransitionsTheme: PageTransitionsTheme(builders: {
+                TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+                TargetPlatform.android: FadeUpwardsPageTransitionsBuilder(),
+            }),
+            // Define the default brightness and colors.
 
-                /* brightness: Brightness.dark,
+            /* brightness: Brightness.dark,
           primaryColor: Colors.lightBlue[800],
           accentColor: Colors.cyan[600],*/
 
-                // Define the default font family.
-                fontFamily: 'Montserrat',
+            // Define the default font family.
+//          fontFamily: 'Raleway',
 
-                // Define the default TextTheme. Use this to specify the default
-                // text styling for headlines, titles, bodies of text, and more.
+            // Define the default TextTheme. Use this to specify the default
+            // text styling for headlines, titles, bodies of text, and more.
 //          textTheme: TextTheme(
 //            headline: TextStyle(fontSize: 72.0, fontWeight: FontWeight.bold),
 //            title: TextStyle(fontSize: 36.0, fontStyle: FontStyle.italic),
 //            body1: TextStyle(
-//                fontSize: 25.0,
-//                fontFamily: 'Hind',
-//                fontWeight: FontWeight.bold),
+////                fontSize: 25.0,
+//              fontFamily: 'CenturyGothic',
+////                fontWeight: FontWeight.bold
+//            ),
 //          ),
-            ),
-            home: _firstPage,
-            routes: <String, WidgetBuilder>{
-                Routes.categoriesRoute: (BuildContext context) =>
-                    ChooseCategoriesPage(),
-                Routes.regionsRoute: (BuildContext context) =>
-                    ChooseRegionsPage(),
-                Routes.homePageRoute: (BuildContext context) => HomePage(),
-            });
+        ),
+        home: _firstPage,
+        routes: <String, WidgetBuilder>{
+            Routes.categoriesRoute: (BuildContext context) =>
+                ChooseCategoriesPage(),
+            Routes.regionsRoute: (BuildContext context) => ChooseRegionsPage(),
+            Routes.homePageRoute: (BuildContext context) => HomePage(),
+        });
     }
 }

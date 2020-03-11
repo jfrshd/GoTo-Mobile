@@ -67,13 +67,13 @@ class _ChooseCategoriesPageState extends State<ChooseCategoriesPage> {
 
   @override
   Widget build(BuildContext context) {
-	  if (_isFirstLaunch) {
-		  checkFirstTime();
-	  }
-	  if (_error) {
-		  return ErrorPage(
-			  createAppBar(), Constants.categoriesError, loadCategories);
-	  }
+    if (_isFirstLaunch) {
+      checkFirstTime();
+    }
+    if (_error) {
+      return ErrorPage(
+          createAppBar(), Constants.categoriesError, loadCategories);
+    }
 
     return Scaffold(
         key: _scaffoldKey,
@@ -139,31 +139,32 @@ class _ChooseCategoriesPageState extends State<ChooseCategoriesPage> {
                                             "/" +
                                             _categories[index]
                                                 .thumbnail
-                                                .replaceFirst("public/", ""),
+                                        ,
                                         placeholderBuilder: (context) =>
                                             CircularProgressIndicator(),
                                       ),
-                                    ),
+                              ),
                             ))),
                   );
                 }),
         floatingActionButton: _categories.length == 0
             ? null
             : FloatingActionButton(
-			backgroundColor: Colors.blue,
-			onPressed: () {
+            backgroundColor: Colors.blue,
+            onPressed: () {
 //                              checkConnectivity();
-				if (_categories
-					.where((c) => c.selected)
-					.toList()
-					.length >=
-					3) {
-					saveCategories();
-				} else {
-					showChooseAtLeastThree();
-				}
-			},
-			child: Icon(_isFirstLaunch ? Icons.arrow_forward : Icons.check)));
+              if (_categories
+                  .where((c) => c.selected)
+                  .toList()
+                  .length >=
+                  3) {
+                saveCategories();
+              } else {
+                showChooseAtLeastThree();
+              }
+            },
+            child:
+            Icon(_isFirstLaunch ? Icons.arrow_forward : Icons.check)));
   }
 
   void loadCategories() {
@@ -173,26 +174,26 @@ class _ChooseCategoriesPageState extends State<ChooseCategoriesPage> {
     });
     getCategories().then((response) {
       final parsed = Map<String, dynamic>.from(json.decode(response.body));
-	  if (parsed["status"] == "success") {
-		  final categories = parsed['categories']
-			  .map<Category>((json) => Category.fromJson(json))
-			  .toList();
-		  setState(() {
-			  _error = false;
-			  _loadingCategories = false;
-			  _categories = categories;
-		  });
-	  } else if (parsed["status"] == "fail") {
-		  setState(() {
-			  _error = true;
-			  _loadingCategories = false;
-		  });
-	  } else if (parsed["status"] == "error") {
-		  setState(() {
-			  _error = true;
-			  _loadingCategories = false;
-		  });
-	  }
+      if (parsed["status"] == "success") {
+        final categories = parsed['categories']
+            .map<Category>((json) => Category.fromJson(json))
+            .toList();
+        setState(() {
+          _error = false;
+          _loadingCategories = false;
+          _categories = categories;
+        });
+      } else if (parsed["status"] == "fail") {
+        setState(() {
+          _error = true;
+          _loadingCategories = false;
+        });
+      } else if (parsed["status"] == "error") {
+        setState(() {
+          _error = true;
+          _loadingCategories = false;
+        });
+      }
     }).catchError((e) {
       print("getCategories error: ");
       print(e);
@@ -209,16 +210,16 @@ class _ChooseCategoriesPageState extends State<ChooseCategoriesPage> {
             .map<int>((category) => category.id)
             .toList())
         .then((response) {
-		final parsed = Map<String, dynamic>.from(json.decode(response.body));
-		if (parsed["status"] == "success") {
-			if (_isFirstLaunch) {
-				Navigator.pushReplacementNamed(context, Routes.regionsRoute);
-			} else {
-				Navigator.pop(context);
-			}
-		} else {
-			showError("Failed");
-		}
+      final parsed = Map<String, dynamic>.from(json.decode(response.body));
+      if (parsed["status"] == "success") {
+        if (_isFirstLaunch) {
+          Navigator.pushReplacementNamed(context, Routes.regionsRoute);
+        } else {
+          Navigator.pop(context);
+        }
+      } else {
+        showError("Failed");
+      }
     }).catchError((e) {
       print("saveCategories error: ");
       print(e);
@@ -243,7 +244,7 @@ class _ChooseCategoriesPageState extends State<ChooseCategoriesPage> {
   }
 
   void checkFirstTime() async {
-	  _isFirstLaunch =
-	  await SharedPreferencesHelper.getBool(Constants.firstTimeCode);
+    _isFirstLaunch =
+    await SharedPreferencesHelper.getBool(Constants.firstTimeCode);
   }
 }
