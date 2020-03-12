@@ -19,19 +19,18 @@ class ChooseRegionsPage extends StatefulWidget {
 }
 
 class _ChooseRegionsPageState extends State<ChooseRegionsPage> {
-    final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<
-        ScaffoldState>();
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
-    bool _isFirstLaunch = true;
-    bool _error = false;
-    bool _loadingRegions = false;
+  bool _isFirstLaunch = true;
+  bool _error = false;
+  bool _loadingRegions = false;
 
-    static List<Region> _regions = List<Region>();
+  static List<Region> _regions = List<Region>();
 
-    void initState() {
-        super.initState();
-        if (_regions.length == 0) loadRegions();
-    }
+  void initState() {
+    super.initState();
+    if (_regions.length == 0) loadRegions();
+  }
 
   AppBar createAppBar() {
     return AppBar(
@@ -68,22 +67,33 @@ class _ChooseRegionsPageState extends State<ChooseRegionsPage> {
 
   @override
   Widget build(BuildContext context) {
-      if (_isFirstLaunch) {
-          checkFirstTime();
-      }
-      if (_error) {
-          return ErrorPage(createAppBar(), Constants.regionsError, loadRegions);
-      }
+	  if (_isFirstLaunch) {
+		  checkFirstTime();
+	  }
+	  if (_error) {
+		  return Scaffold(
+			  key: _scaffoldKey,
+			  backgroundColor: Colors.white,
+			  appBar: createAppBar(),
+			  body: ErrorPage(Constants.regionsError, loadRegions));
+	  }
 
-    List<Widget> regionsImgWidgets = new List<Widget>();
-    _regions.forEach((region) => regionsImgWidgets.add(SvgPicture.network(
-          API.serverAddress + "/" + region.svg,
-          width: MediaQuery.of(context).size.width / 2.5,
-          height: MediaQuery.of(context).size.height / 2.5,
-          color: region.selected ? region.color : Colors.black12,
-        )));
+	  List<Widget> regionsImgWidgets = new List<Widget>();
+	  _regions.forEach((region) =>
+		  regionsImgWidgets.add(SvgPicture.network(
+			  API.serverAddress + "/" + region.svg,
+			  width: MediaQuery
+				  .of(context)
+				  .size
+				  .width / 2.5,
+			  height: MediaQuery
+				  .of(context)
+				  .size
+				  .height / 2.5,
+			  color: region.selected ? region.color : Colors.black12,
+		  )));
 
-    return Scaffold(
+	  return Scaffold(
         key: _scaffoldKey,
         backgroundColor: Colors.white,
         appBar: createAppBar(),
@@ -183,16 +193,16 @@ class _ChooseRegionsPageState extends State<ChooseRegionsPage> {
     getRegions().then((response) {
       final parsed = Map<String, dynamic>.from(json.decode(response.body));
       if (parsed["status"] == "success") {
-          final regions = parsed['regions']
-              .map<Region>((json) => Region.fromJson(json))
-              .toList();
+		  final regions = parsed['regions']
+			  .map<Region>((json) => Region.fromJson(json))
+			  .toList();
 
-          setState(() {
-              _error = false;
-              _loadingRegions = false;
-              _regions = regions;
-          });
-      }
+		  setState(() {
+			  _error = false;
+			  _loadingRegions = false;
+			  _regions = regions;
+		  });
+	  }
     }).catchError((e) {
       print("getRegions error: ");
       print(e);
@@ -209,18 +219,18 @@ class _ChooseRegionsPageState extends State<ChooseRegionsPage> {
             .map<int>((region) => region.id)
             .toList())
         .then((response) {
-        final parsed = Map<String, dynamic>.from(json.decode(response.body));
-        if (parsed["status"] == "success") {
-            if (_isFirstLaunch) {
-                setFirstTimeFalse();
-                Navigator.pushReplacementNamed(context, Routes.homePageRoute);
-            } else {
-                Navigator.pop(context);
-            }
-        } else {
-            showError("Failed");
-        }
-    }).catchError((e) {
+		final parsed = Map<String, dynamic>.from(json.decode(response.body));
+		if (parsed["status"] == "success") {
+			if (_isFirstLaunch) {
+				setFirstTimeFalse();
+				Navigator.pushReplacementNamed(context, Routes.homePageRoute);
+			} else {
+				Navigator.pop(context);
+			}
+		} else {
+			showError("Failed");
+		}
+	}).catchError((e) {
       print("saveRegions error: ");
       print(e);
       showError("Failed");
@@ -252,8 +262,8 @@ class _ChooseRegionsPageState extends State<ChooseRegionsPage> {
   }
 
   void checkFirstTime() async {
-      _isFirstLaunch =
-      await SharedPreferencesHelper.getBool(Constants.firstTimeCode);
+	  _isFirstLaunch =
+	  await SharedPreferencesHelper.getBool(Constants.firstTimeCode);
   }
 
   setFirstTimeFalse() async {

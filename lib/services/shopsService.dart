@@ -15,6 +15,12 @@ Future<http.Response> getShop(int shopID) async {
       headers: {"Authorization": token}).timeout(Duration(seconds: 2));
 }
 
+Future<http.Response> searchShops(String searchText) async {
+  String token = await getAuthToken();
+  return http.get(API.searchShops + "/" + searchText,
+      headers: {"Authorization": token}).timeout(Duration(seconds: 5));
+}
+
 Future<http.Response> toggleFollowShop(int shopID, bool isFollowed) async {
   String token = await getAuthToken();
   return http.post(isFollowed ? API.unFollowShop : API.followShop, headers: {

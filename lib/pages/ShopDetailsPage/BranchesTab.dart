@@ -31,8 +31,7 @@ class _BranchesTabState extends State<BranchesTab> {
   Widget build(BuildContext context) {
     final orientation = MediaQuery.of(context).orientation;
     if (_error) {
-      return ErrorPage(
-          null, Constants.branchesError, _loadBranches);
+      return ErrorPage(Constants.branchesError, _loadBranches);
     }
     return Container(
       color: Colors.grey[100],

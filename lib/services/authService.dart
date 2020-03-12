@@ -66,7 +66,7 @@ Future<String> updateFirebaseToken(String firebaseToken) async {
       return 'FirebaseToken already exist!';
     }
   } on Exception catch (e) {
-    print('getAuthToken error: ');
+    print('updateFirebaseToken error: ');
     print(e);
     return "";
   }

@@ -21,23 +21,20 @@ class PostItem extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
 			  Padding(
-				  padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
-				  child: PostHeader(index, post, isHeaderClickable),
-			  ),
-			  Padding(
-				  padding: EdgeInsets.fromLTRB(16, 0, 16, 10),
-				  child: Text(
-					  post.description,
-				  )),
+              padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+              child: PostHeader(index, post, isHeaderClickable),
+            ),
+            Padding(
+                padding: EdgeInsets.fromLTRB(16, 0, 16, 10),
+                child: Text(
+                  post.description,
+                )),
             post.images.length == 0
                 ? Container()
-                : Padding(
-                    padding: EdgeInsets.only(bottom: 10),
-                    child: PostBodyImages(
-                      post.shop.name,
-                      post.description,
-                      post.images,
-                    ),
+                : PostBodyImages(
+                    post.shop.name,
+                    post.description,
+                    post.images,
                   ),
             PostFooter(post.dateStart, post.dateEnd)
           ],

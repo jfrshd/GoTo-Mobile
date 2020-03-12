@@ -71,8 +71,11 @@ class _ChooseCategoriesPageState extends State<ChooseCategoriesPage> {
       checkFirstTime();
     }
     if (_error) {
-      return ErrorPage(
-          createAppBar(), Constants.categoriesError, loadCategories);
+      return Scaffold(
+          key: _scaffoldKey,
+          backgroundColor: Colors.white,
+          appBar: createAppBar(),
+          body: ErrorPage(Constants.categoriesError, loadCategories));
     }
 
     return Scaffold(
@@ -137,34 +140,29 @@ class _ChooseCategoriesPageState extends State<ChooseCategoriesPage> {
                                       child: SvgPicture.network(
                                         API.serverAddress +
                                             "/" +
-                                            _categories[index]
-                                                .thumbnail
-                                        ,
+                                            _categories[index].thumbnail,
                                         placeholderBuilder: (context) =>
                                             CircularProgressIndicator(),
                                       ),
-                              ),
+                                    ),
                             ))),
                   );
                 }),
         floatingActionButton: _categories.length == 0
             ? null
             : FloatingActionButton(
-            backgroundColor: Colors.blue,
-            onPressed: () {
+                backgroundColor: Colors.blue,
+                onPressed: () {
 //                              checkConnectivity();
-              if (_categories
-                  .where((c) => c.selected)
-                  .toList()
-                  .length >=
-                  3) {
-                saveCategories();
-              } else {
-                showChooseAtLeastThree();
-              }
-            },
-            child:
-            Icon(_isFirstLaunch ? Icons.arrow_forward : Icons.check)));
+                  if (_categories.where((c) => c.selected).toList().length >=
+                      3) {
+                    saveCategories();
+                  } else {
+                    showChooseAtLeastThree();
+                  }
+                },
+                child:
+                    Icon(_isFirstLaunch ? Icons.arrow_forward : Icons.check)));
   }
 
   void loadCategories() {
