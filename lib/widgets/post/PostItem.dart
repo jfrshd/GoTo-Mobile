@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gotomobile/models/post.dart';
 import 'package:gotomobile/widgets/post/PostBodyImages.dart';
+import 'package:gotomobile/widgets/post/PostFooter.dart';
 import 'package:gotomobile/widgets/post/PostHeader.dart';
 
 class PostItem extends StatelessWidget {
@@ -27,19 +28,19 @@ class PostItem extends StatelessWidget {
 				  padding: EdgeInsets.fromLTRB(16, 0, 16, 10),
 				  child: Text(
 					  post.description,
-					  style: TextStyle(fontFamily: 'CenturyGothic'),
 				  )),
-			  post.images.length == 0
-				  ? Container()
-				  : Padding(
-				  padding: EdgeInsets.only(bottom: 10),
-				  child: PostBodyImages(
-					  post.shop.name,
-					  post.description,
-					  post.images,
-				  ),
-			  ),
-		  ],
+            post.images.length == 0
+                ? Container()
+                : Padding(
+                    padding: EdgeInsets.only(bottom: 10),
+                    child: PostBodyImages(
+                      post.shop.name,
+                      post.description,
+                      post.images,
+                    ),
+                  ),
+            PostFooter(post.dateStart, post.dateEnd)
+          ],
         ));
   }
 }

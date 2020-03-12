@@ -16,7 +16,7 @@ void main() {
 
 /// This Widget is the main application widget.
 class MyApp extends StatefulWidget {
-    MyAppState createState() => MyAppState();
+  MyAppState createState() => MyAppState();
 }
 
 class MyAppState extends State<MyApp> {
@@ -41,7 +41,7 @@ class MyAppState extends State<MyApp> {
 
     return MaterialApp(
         theme: ThemeData(
-          primaryColor: Colors.blue,
+            primaryColor: Colors.blue,
             pageTransitionsTheme: PageTransitionsTheme(builders: {
                 TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
                 TargetPlatform.android: FadeUpwardsPageTransitionsBuilder(),
@@ -53,7 +53,7 @@ class MyAppState extends State<MyApp> {
           accentColor: Colors.cyan[600],*/
 
             // Define the default font family.
-//          fontFamily: 'Raleway',
+            fontFamily: 'ProductSans',
 
             // Define the default TextTheme. Use this to specify the default
             // text styling for headlines, titles, bodies of text, and more.

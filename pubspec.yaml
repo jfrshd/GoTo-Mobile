@@ -79,11 +79,11 @@ flutter:
     # list giving the asset and other descriptors for the font. For
     # example:
   fonts:
-    - family: CenturyGothic
+    - family: ProductSans
       fonts:
-        - asset: assets/fonts/Century_Gothic_400.ttf
+        - asset: assets/fonts/Product_Sans_Regular.ttf
           style: normal
-          weight: 400
+  #          weight: 400
 
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages

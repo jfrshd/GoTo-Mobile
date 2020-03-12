@@ -74,11 +74,11 @@ class GlobalMethods {
     } else if (diffDays == 1) {
       return "Yesterday at " + DateFormat('jm').format(date);
     } else if (diffDays < 365) {
-      return DateFormat('MMMMd').format(date) +
+      return DateFormat('MMMd').format(date) +
           " at " +
           DateFormat('jm').format(date);
     } else {
-      return DateFormat('yMMMMd').format(date) +
+      return DateFormat('yMMMd').format(date) +
           " at " +
           DateFormat('jm').format(date);
     }

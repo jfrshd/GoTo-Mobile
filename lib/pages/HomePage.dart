@@ -3,9 +3,11 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:gotomobile/models/post.dart';
+import 'package:gotomobile/models/shop.dart';
 import 'package:gotomobile/pages/ErrorPage.dart';
 import 'package:gotomobile/services/postsService.dart';
 import 'package:gotomobile/utils/Constants.dart';
+import 'package:gotomobile/widgets/ShopItem.dart';
 import 'package:gotomobile/widgets/colorLoader/ColorLoader4.dart';
 import 'package:gotomobile/widgets/drawer/CustomDrawer.dart';
 import 'package:gotomobile/widgets/post/PostItem.dart';
@@ -70,73 +72,125 @@ class _MainPageState extends State<HomePage> {
           appBar: _createAppBar(),
           body: _posts.length == 0 && !_isSearch
               ? Center(
-            child: ColorLoader4(
-                color1: Colors.blue,
-                color2: Colors.blue[300],
-                color3: Colors.blue[100]),
-          )
+                  child: ColorLoader4(
+                      color1: Colors.blue,
+                      color2: Colors.blue[300],
+                      color3: Colors.blue[100]),
+                )
               : _posts.length == 0 && _isSearch
-              ? Container(
-            child: Center(child: Text('No results found')),
-          )
-              : GestureDetector(
-            onTap: () {
+                  ? Container(
+                      child: Center(child: Text('No results found')),
+                    )
+                  : GestureDetector(
+                      onTap: () {
 //                    FocusScopeNode currentFocus = FocusScope.of(context);
-              _focusNode.unfocus();
-            },
-            child: Column(children: <Widget>[
-//                        _isSearch
-//                            ? Expanded(
-//                                child: ListView.builder(
-//                                    itemCount: 100,
-//                                    itemBuilder: (context, index) {
-//                                      return Text(
-//                                          'Shop: ' + index.toString());
-//                                    }),
-//                              )
-//                            : Container(),
-              Expanded(
-                flex: 1,
-                child: RefreshIndicator(
-                  key: _refreshIndicatorKey,
-                  onRefresh: loadPosts,
-                  color: Theme
-                      .of(context)
-                      .primaryColor,
-                  child: ListView.builder(
-                    controller: _scrollController,
-                    itemCount: _posts.length + 1,
-                    itemBuilder: (BuildContext context, int index) {
-                      if (index == _posts.length) {
-                        if (_moreToLoad && !_isSearch) {
-                          if (_loadingPosts)
-                            return Center(
-                              child: Padding(
-                                padding: EdgeInsets.fromLTRB(
-                                    10, 10, 10, 10),
-                                child: ColorLoader4(
-                                    color1: Colors.blue,
-                                    color2: Colors.blue[300],
-                                    color3: Colors.blue[100]),
+                        _focusNode.unfocus();
+                      },
+                      child: _isSearch
+                          ? CustomScrollView(
+                              shrinkWrap: true,
+                              slivers: <Widget>[
+                                SliverToBoxAdapter(
+                                  child: Container(
+                                      padding:
+                                          EdgeInsets.symmetric(vertical: 10),
+                                      child: Center(
+                                        child: Container(
+                                          padding:
+                                              EdgeInsets.symmetric(vertical: 5),
+                                          decoration: BoxDecoration(
+                                            border: Border(
+                                              bottom: BorderSide(
+                                                  width: 2.0,
+                                                  color: Theme.of(context)
+                                                      .primaryColor),
+                                            ),
+                                          ),
+                                          child: Text(
+                                            'Shops',
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+//                                            color: Colors.white,
+                                            ),
+                                          ),
+                                        ),
+                                      )),
+                                ),
+                                SliverGrid(
+                                    gridDelegate:
+                                        SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisCount: 2,
+                                      mainAxisSpacing: 5.0,
+                                      crossAxisSpacing: 10.0,
+                                      childAspectRatio: 3.0,
+                                    ),
+                                    delegate: SliverChildBuilderDelegate(
+                                        (context, index) {
+                                      return ShopItem(
+                                          index,
+                                          Shop(
+                                              name: "ShopShopShopShopShop: " +
+                                                  index.toString(),
+                                              logo: ""));
+                                    }, childCount: 10)),
+                                SliverToBoxAdapter(
+                                  child: Container(
+                                      color: Theme.of(context).primaryColor,
+                                      padding:
+                                          EdgeInsets.symmetric(vertical: 10),
+                                      child: Center(child: Text('Posts'))),
+                                ),
+                                SliverList(
+                                    delegate: SliverChildBuilderDelegate(
+                                        (context, index) {
+                                  return PostItem(index, _posts[index], true);
+                                }, childCount: 10))
+                              ],
+                            )
+                          : Column(children: <Widget>[
+                              Expanded(
+                                flex: 1,
+                                child: RefreshIndicator(
+                                  key: _refreshIndicatorKey,
+                                  onRefresh: loadPosts,
+                                  color: Theme.of(context).primaryColor,
+                                  child: ListView.builder(
+                                    controller: _scrollController,
+                                    itemCount: _posts.length + 1,
+                                    itemBuilder:
+                                        (BuildContext context, int index) {
+                                      if (index == _posts.length) {
+                                        if (_moreToLoad && !_isSearch) {
+                                          if (_loadingPosts)
+                                            return Center(
+                                              child: Padding(
+                                                padding: EdgeInsets.fromLTRB(
+                                                    10, 10, 10, 10),
+                                                child: ColorLoader4(
+                                                    color1: Colors.blue,
+                                                    color2: Colors.blue[300],
+                                                    color3: Colors.blue[100]),
+                                              ),
+                                            );
+                                          else if (_errorLoadingMore)
+                                            return Padding(
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
+                                              child: Center(
+                                                  child: Text(Constants
+                                                      .postsPaginationError)),
+                                            );
+                                        }
+                                        return Container();
+                                      } else
+                                        return PostItem(
+                                            index, _posts[index], true);
+                                    },
+                                  ),
+                                ),
                               ),
-                            );
-                          else if (_errorLoadingMore)
-                            return Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Center(
-                                  child: Text(Constants
-                                      .postsPaginationError)),
-                            );
-                        }
-                        return Container();
-                      } else
-                        return PostItem(index, _posts[index], true);
-                    },
-                  ),
-                ),
-              ),
-            ]),
-          ),
+                            ]),
+                    ),
         ));
   }
 
@@ -163,7 +217,7 @@ class _MainPageState extends State<HomePage> {
                               decoration: !_isSearch
                                   ? InputDecoration(
 //                                      hintText: "GoTo",
-                                  hintText: "Search",
+                                  hintText: "Search shops",
                                   hintStyle: TextStyle(
                                       fontSize: 20,
                                       color: Color(0x88FFFFFF)),
