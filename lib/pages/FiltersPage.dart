@@ -19,6 +19,7 @@ class _FiltersPageState extends State<FiltersPage> {
       backgroundColor: Colors.grey[300],
       body: CustomScrollView(
         slivers: <Widget>[
+          SliverToBoxAdapter(child: SizedBox(height: 5, child: Container())),
           SliverToBoxAdapter(child: PostTypeCard()),
           SliverToBoxAdapter(child: SortCard()),
           SliverToBoxAdapter(child: CategoriesCard()),

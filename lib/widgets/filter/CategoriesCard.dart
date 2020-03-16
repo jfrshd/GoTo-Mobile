@@ -23,7 +23,7 @@ class _CategoriesCardState extends State<CategoriesCard> {
     final orientation = MediaQuery.of(context).orientation;
 
     return Container(
-      margin: const EdgeInsets.only(top: 10),
+      margin: const EdgeInsets.only(top: 5),
       padding: const EdgeInsets.all(10),
       color: Colors.white,
       child: Center(

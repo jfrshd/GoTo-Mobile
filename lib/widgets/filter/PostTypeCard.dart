@@ -16,7 +16,7 @@ class _PostTypeCardState extends State<PostTypeCard> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: 10),
+      margin: const EdgeInsets.symmetric(vertical: 5),
       padding: const EdgeInsets.all(10),
       color: Colors.white,
       child: Center(
