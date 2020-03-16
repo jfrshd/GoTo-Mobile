@@ -67,122 +67,111 @@ class _ChooseRegionsPageState extends State<ChooseRegionsPage> {
 
   @override
   Widget build(BuildContext context) {
-	  if (_isFirstLaunch) {
-		  checkFirstTime();
-	  }
-	  if (_error) {
-		  return Scaffold(
-			  key: _scaffoldKey,
-			  backgroundColor: Colors.white,
-			  appBar: createAppBar(),
-			  body: ErrorPage(Constants.regionsError, loadRegions));
-	  }
+    if (_isFirstLaunch) {
+      checkFirstTime();
+    }
+    if (_error) {
+      return Scaffold(
+          key: _scaffoldKey,
+          backgroundColor: Colors.white,
+          appBar: createAppBar(),
+          body: ErrorPage(Constants.regionsError, loadRegions));
+    }
 
-	  List<Widget> regionsImgWidgets = new List<Widget>();
-	  _regions.forEach((region) =>
-		  regionsImgWidgets.add(SvgPicture.network(
-			  API.serverAddress + "/" + region.svg,
-			  width: MediaQuery
-				  .of(context)
-				  .size
-				  .width / 2.5,
-			  height: MediaQuery
-				  .of(context)
-				  .size
-				  .height / 2.5,
-			  color: region.selected ? region.color : Colors.black12,
-		  )));
+    List<Widget> regionsImgWidgets = new List<Widget>();
+    _regions.forEach((region) => regionsImgWidgets.add(SvgPicture.network(
+          API.serverAddress + "/" + region.svg,
+          width: MediaQuery.of(context).size.width / 2.5,
+          height: MediaQuery.of(context).size.height / 2.5,
+          color: region.selected ? region.color : Colors.black12,
+        )));
 
-	  return Scaffold(
-        key: _scaffoldKey,
-        backgroundColor: Colors.white,
-        appBar: createAppBar(),
-        body: _regions.length == 0
-            ? Center(
-                child: ColorLoader4(
-                    color1: Colors.blue,
-                    color2: Colors.blue[300],
-                    color3: Colors.blue[100]))
-            : Container(
-                height: double.infinity,
-                child: Builder(
-                    builder: (context) => Column(
-                          children: <Widget>[
-                            Center(
-                              child: Padding(
-                                  padding: EdgeInsets.fromLTRB(0, 20, 0, 20),
-                                  child: Stack(
-                                    children: regionsImgWidgets,
-                                  )),
-                            ),
-                            Expanded(
-                                child: ListView.builder(
-                                    itemCount: _regions.length,
-                                    shrinkWrap: true,
-                                    itemBuilder:
-                                        (BuildContext context, int index) {
-                                      return Container(
-                                        margin: index == _regions.length - 1
-                                            ? EdgeInsets.only(bottom: 70)
-                                            : null,
-                                        child: InkWell(
-                                            onTap: () {
-                                              setState(() {
-                                                _regions[index].selected =
-                                                    !_regions[index].selected;
-                                              });
-                                            },
-                                            child: Container(
-                                                decoration: BoxDecoration(
-                                                    color: Colors.white),
-                                                child: ListTile(
-                                                  title: Text(
-                                                      _regions[index].name),
-                                                  trailing: Container(
-                                                    decoration: BoxDecoration(
-                                                        shape: BoxShape.circle,
-                                                        color: Colors.white),
-                                                    height: 30,
-                                                    width: 30,
-                                                    child: Padding(
-                                                      padding:
-                                                          const EdgeInsets.all(
-                                                              0.0),
-                                                      child: _regions[index]
-                                                              .selected
-                                                          ? Icon(
-                                                              Icons.star,
-                                                              size: 30.0,
-                                                              color:
-                                                                  Colors.blue,
-                                                            )
-                                                          : Icon(
-                                                              Icons.star_border,
-                                                              size: 30.0,
-                                                              color:
-                                                                  Colors.blue,
-                                                            ),
-                                                    ),
+    return Scaffold(
+      key: _scaffoldKey,
+      backgroundColor: Colors.white,
+      appBar: createAppBar(),
+      body: _regions.length == 0
+          ? Center(
+              child: ColorLoader4(
+                  color1: Colors.blue,
+                  color2: Colors.blue[300],
+                  color3: Colors.blue[100]))
+          : Container(
+              height: double.infinity,
+              child: Builder(
+                  builder: (context) => Column(
+                        children: <Widget>[
+                          Center(
+                            child: Padding(
+                                padding: EdgeInsets.fromLTRB(0, 20, 0, 20),
+                                child: Stack(
+                                  children: regionsImgWidgets,
+                                )),
+                          ),
+                          Expanded(
+                              child: ListView.builder(
+                                  itemCount: _regions.length,
+                                  shrinkWrap: true,
+                                  itemBuilder:
+                                      (BuildContext context, int index) {
+                                    return Container(
+                                      margin: index == _regions.length - 1
+                                          ? EdgeInsets.only(bottom: 70)
+                                          : null,
+                                      child: InkWell(
+                                          onTap: () {
+                                            setState(() {
+                                              _regions[index].selected =
+                                                  !_regions[index].selected;
+                                            });
+                                          },
+                                          child: Container(
+                                              decoration: BoxDecoration(
+                                                  color: Colors.white),
+                                              child: ListTile(
+                                                title:
+                                                    Text(_regions[index].name),
+                                                trailing: Container(
+                                                  decoration: BoxDecoration(
+                                                      shape: BoxShape.circle,
+                                                      color: Colors.white),
+                                                  height: 30,
+                                                  width: 30,
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            0.0),
+                                                    child: _regions[index]
+                                                            .selected
+                                                        ? Icon(
+                                                            Icons.star,
+                                                            size: 30.0,
+                                                            color: Colors.blue,
+                                                          )
+                                                        : Icon(
+                                                            Icons.star_border,
+                                                            size: 30.0,
+                                                            color: Colors.blue,
+                                                          ),
                                                   ),
-                                                ))),
-                                      );
-                                    }))
-                          ],
-                        ))),
-        floatingActionButton:
-//        _regions.length == 0
-//            ? null
-//            :
-            FloatingActionButton(
-                backgroundColor: Colors.blue,
-                onPressed: () {
-                  if (_regions.where((r) => r.selected).toList().length >= 1) {
-                    saveRegions();
-                  } else {
-                    showChooseAtLeastOne();
-                  }
-                },
-                child: Icon(Icons.check)));
+                                                ),
+                                              ))),
+                                    );
+                                  }))
+                        ],
+                      ))),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.blue,
+        onPressed: () {
+          if (_regions.where((r) => r.selected).toList().length >= 1) {
+            saveRegions();
+          } else {
+            showChooseAtLeastOne();
+          }
+        },
+        child: Icon(Icons.check),
+      ),
+    );
   }
 
   void loadRegions() {
@@ -214,27 +203,27 @@ class _ChooseRegionsPageState extends State<ChooseRegionsPage> {
   }
 
   void saveRegions() {
-    updateSelectedRegions(_regions
-            .where((region) => region.selected)
-            .map<int>((region) => region.id)
-            .toList())
-        .then((response) {
-		final parsed = Map<String, dynamic>.from(json.decode(response.body));
-		if (parsed["status"] == "success") {
-			if (_isFirstLaunch) {
-				setFirstTimeFalse();
-				Navigator.pushReplacementNamed(context, Routes.homePageRoute);
-			} else {
-				Navigator.pop(context);
-			}
-		} else {
-			showError("Failed");
-		}
-	}).catchError((e) {
-      print("saveRegions error: ");
-      print(e);
-      showError("Failed");
-    });
+	  updateSelectedRegions(_regions
+		  .where((region) => region.selected)
+		  .map<int>((region) => region.id)
+		  .toList())
+		  .then((response) {
+		  final parsed = Map<String, dynamic>.from(json.decode(response.body));
+		  if (parsed["status"] == "success") {
+			  if (_isFirstLaunch) {
+				  setFirstTimeFalse();
+				  Navigator.pushReplacementNamed(context, Routes.homePageRoute);
+			  } else {
+				  Navigator.pop(context);
+			  }
+		  } else {
+			  showError("Failed");
+		  }
+	  }).catchError((e) {
+		  print("saveRegions error: ");
+		  print(e);
+		  showError("Failed");
+	  });
   }
 
   void showError(String e) {

@@ -16,43 +16,31 @@ class PostBodyImages extends StatelessWidget {
     return images.length == 1
         ? InkWell(
             child: CachedNetworkImage(
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.width,
               imageUrl: API.serverAddress + "/" + images[0],
-              placeholder: (context, url) =>
-                  SizedBox.fromSize(
-                      size: Size(
-                          MediaQuery
-                              .of(context)
-                              .size
-                              .width,
-                          MediaQuery
-                              .of(context)
-                              .size
-                              .width,
-                      ),
-                      child: Container(
-                          color: Colors.grey[100],
-                          child: Center(child: CircularProgressIndicator()),
-                      ),
+              placeholder: (context, url) => SizedBox.fromSize(
+                size: Size(
+                  MediaQuery.of(context).size.width,
+                  MediaQuery.of(context).size.width,
+                ),
+                child: Container(
+                  color: Colors.grey[100],
+                  child: Center(child: CircularProgressIndicator()),
+                ),
+              ),
+              errorWidget: (context, url, error) => SizedBox.fromSize(
+                size: Size(
+                  MediaQuery.of(context).size.width,
+                  MediaQuery.of(context).size.width,
+                ),
+                child: Container(
+                  color: Colors.grey[100],
+                  child: Center(
+                    child: Icon(Icons.broken_image),
                   ),
-              errorWidget: (context, url, error) =>
-                  SizedBox.fromSize(
-                      size: Size(
-                          MediaQuery
-                              .of(context)
-                              .size
-                              .width,
-                          MediaQuery
-                              .of(context)
-                              .size
-                              .width,
-                      ),
-                      child: Container(
-                          color: Colors.grey[100],
-                          child: Center(
-                              child: Icon(Icons.broken_image),
-                          ),
-                      ),
-                  ),
+                ),
+              ),
               fit: BoxFit.fill,
             ),
             onTap: () {
@@ -65,45 +53,45 @@ class PostBodyImages extends StatelessWidget {
             },
           )
         : SizedBox.fromSize(
-          size: Size(MediaQuery
-              .of(context)
-              .size
-              .width,
-              MediaQuery
-                  .of(context)
-                  .size
-                  .height * 0.2),
-          child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: images.length,
-              itemBuilder: (BuildContext context, int index) {
-                  return Container(
-                      padding: EdgeInsets.fromLTRB(5, 0, 5, 0),
-                      width: MediaQuery
-                          .of(context)
-                          .size
-                          .width * 0.3,
-                      child: InkWell(
-                          child: CachedNetworkImage(
-                              imageUrl: API.serverAddress + "/" + images[index],
-                              placeholder: (context, url) =>
-                                  Center(child: CircularProgressIndicator()),
-                              errorWidget: (context, url, error) =>
-                                  Icon(Icons.error),
-                              fit: BoxFit.fill),
-                          onTap: () {
+		size: Size(MediaQuery
+			.of(context)
+			.size
+			.width,
+			MediaQuery
+				.of(context)
+				.size
+				.width),
+		child: ListView.builder(
+			scrollDirection: Axis.horizontal,
+			itemCount: images.length,
+			itemBuilder: (BuildContext context, int index) {
+				return Container(
+					padding: EdgeInsets.fromLTRB(5, 0, 5, 0),
+					width: MediaQuery
+						.of(context)
+						.size
+						.width * 0.6,
+					child: InkWell(
+						child: CachedNetworkImage(
+							imageUrl: API.serverAddress + "/" + images[index],
+							placeholder: (context, url) =>
+								Center(child: CircularProgressIndicator()),
+							errorWidget: (context, url, error) =>
+								Icon(Icons.error),
+							fit: BoxFit.fill),
+						onTap: () {
 //                          toggleSearch();
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          ImageViewerPage(
-                                              images, shopName, postDescription,
-                                              index)),
-                              );
-                          },
-                      ));
-              }),
-      );
+							Navigator.push(
+								context,
+								MaterialPageRoute(
+									builder: (context) =>
+										ImageViewerPage(
+											images, shopName, postDescription,
+											index)),
+							);
+						},
+					));
+			}),
+	);
   }
 }

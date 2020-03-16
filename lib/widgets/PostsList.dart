@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:gotomobile/models/post.dart';
+import 'package:gotomobile/models/shop.dart';
 import 'package:gotomobile/pages/ErrorPage.dart';
 import 'package:gotomobile/services/postsService.dart';
 import 'package:gotomobile/utils/Constants.dart';
@@ -10,6 +11,10 @@ import 'package:gotomobile/widgets/post/PostItem.dart';
 import 'colorLoader/ColorLoader4.dart';
 
 class PostsList extends StatefulWidget {
+  final Shop shop;
+
+  PostsList({this.shop});
+
   @override
   _PostsListState createState() => _PostsListState();
 }
@@ -53,55 +58,55 @@ class _PostsListState extends State<PostsList> {
                   color2: Colors.blue[300],
                   color3: Colors.blue[100]),
             )
-          : Column(children: <Widget>[
-              Expanded(
-                flex: 1,
-                child: RefreshIndicator(
-                  key: _refreshIndicatorKey,
-                  onRefresh: loadPosts,
-                  color: Theme.of(context).primaryColor,
-                  child: ListView.builder(
-                    controller: _scrollController,
-                    itemCount: _posts.length + 1,
-                    itemBuilder: (BuildContext context, int index) {
-                      if (index == _posts.length) {
-                        if (_moreToLoad) {
-                          if (_loadingPosts)
-                            return Center(
-                              child: Padding(
-                                padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                                child: ColorLoader4(
-                                    color1: Colors.blue,
-                                    color2: Colors.blue[300],
-                                    color3: Colors.blue[100]),
-                              ),
-                            );
-                          else if (_errorLoadingMore)
-                            return Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Center(
-                                  child: Text(Constants.postsPaginationError)),
-                            );
-                        }
-                        return Container();
-                      } else
-                        return PostItem(index, _posts[index], true);
-                    },
-                  ),
-                ),
+          : RefreshIndicator(
+              key: _refreshIndicatorKey,
+              onRefresh: loadPosts,
+              color: Theme.of(context).primaryColor,
+              child: ListView.builder(
+                controller: widget.shop == null ? _scrollController : null,
+                itemCount: _posts.length,
+                itemBuilder: (BuildContext context, int index) {
+                  if (index == _posts.length) {
+                    if (_moreToLoad) {
+                      if (_loadingPosts)
+                        return Center(
+                          child: Padding(
+                            padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                            child: ColorLoader4(
+                                color1: Colors.blue,
+                                color2: Colors.blue[300],
+                                color3: Colors.blue[100]),
+                          ),
+                        );
+                      else if (_errorLoadingMore)
+                        return Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Center(
+                              child: Text(Constants.postsPaginationError)),
+                        );
+                    }
+                    return Container();
+                  } else {
+                    _posts[index].shop ??= widget.shop;
+                    return PostItem(index, _posts[index], true);
+                  }
+                },
               ),
-            ]),
+            ),
     );
   }
 
-  Future<void> loadPosts({bool error}) {
+  Future<void> loadPosts() {
     _refreshIndicatorKey.currentState?.show();
     setState(() {
       _error = false;
       _loadingPosts = true;
     });
+    final request = widget.shop == null
+        ? getPosts(page: _currentpage)
+        : getPosts(shopID: widget.shop.id, page: _currentpage);
 
-    return getPosts(page: _currentpage).then((response) {
+    return request.then((response) {
       final parsed = Map<String, dynamic>.from(json.decode(response.body));
       if (parsed["status"] == "success") {
         final posts = parsed['posts']['data']

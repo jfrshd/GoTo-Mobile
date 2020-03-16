@@ -19,6 +19,8 @@ class FirebaseNotifications {
 
     _firebaseMessaging.getToken().then((token) async {
       await SharedPreferencesHelper.setString(Constants.firebaseToken, token);
+      print("firebase token");
+      print(token);
       updateFirebaseToken(token);
     });
 

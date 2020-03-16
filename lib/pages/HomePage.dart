@@ -1,6 +1,8 @@
 import 'dart:async';
 
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
+import 'package:gotomobile/pages/FiltersPage.dart';
 import 'package:gotomobile/widgets/PostsList.dart';
 import 'package:gotomobile/widgets/ShopsList.dart';
 import 'package:gotomobile/widgets/drawer/CustomDrawer.dart';
@@ -15,13 +17,41 @@ class _MainPageState extends State<HomePage> {
   FocusNode _focusNode = FocusNode();
 
   bool _isSearch = false;
+  bool _isFilter = false;
   String searchText = 'GoTo';
   bool delayEnded = false;
   bool forceFocus = false;
 
+  void initDynamicLinks() async {
+    final PendingDynamicLinkData data =
+        await FirebaseDynamicLinks.instance.getInitialLink();
+    final Uri deepLink = data?.link;
+
+    if (deepLink != null) {
+      Navigator.pushNamed(context, deepLink.path);
+    }
+
+    FirebaseDynamicLinks.instance.onLink(
+        onSuccess: (PendingDynamicLinkData dynamicLink) async {
+      final Uri deepLink = dynamicLink?.link;
+
+      if (deepLink != null) {
+        print("deepLink.path");
+        print(deepLink.path);
+        Navigator.pushNamed(context, deepLink.path);
+      }
+    }, onError: (OnLinkErrorException e) async {
+      print('onLinkError');
+      print(e.message);
+    });
+  }
+
   @override
   void initState() {
     super.initState();
+
+    this.initDynamicLinks();
+
     _focusNode.addListener(() {
       setState(() {
         _isSearch = _focusNode.hasFocus;
@@ -54,7 +84,9 @@ class _MainPageState extends State<HomePage> {
         backgroundColor: Colors.grey[300],
         drawer: CustomDrawer(),
         appBar: _createAppBar(),
-        body: _isSearch ? ShopsList(searchText) : PostsList(),
+        body: _isSearch
+            ? new ShopsList(searchText)
+            : _isFilter ? new FiltersPage() : new PostsList(),
       ),
     );
   }
@@ -64,7 +96,33 @@ class _MainPageState extends State<HomePage> {
       automaticallyImplyLeading: true,
       centerTitle: true,
       actions: <Widget>[
-        Expanded(
+        _isFilter
+            ? Expanded(
+            flex: 1,
+            child: Padding(
+              padding: EdgeInsets.only(left: 50),
+              child: Row(
+                children: <Widget>[
+                  Expanded(
+                    child: Padding(
+                        padding: EdgeInsets.fromLTRB(15, 0, 15, 0),
+                        child: Stack(children: [
+                          Center(
+                            child: Text(
+                              'Filters',
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontFamily: "ProductSans",
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ])),
+                  ),
+                ],
+              ),
+            ))
+            : Expanded(
             flex: 1,
             child: Padding(
                 padding: EdgeInsets.only(left: 50),
@@ -77,15 +135,15 @@ class _MainPageState extends State<HomePage> {
                             delayEnded
                                 ? SizedBox.fromSize(size: Size(0, 0))
                                 : Center(
-                                    child: Text(
-                                      searchText,
-                                      style: TextStyle(
-                                        fontSize: 20,
-                                        fontFamily: "ProductSans",
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                  ),
+                              child: Text(
+                                searchText,
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontFamily: "ProductSans",
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
                             AnimatedOpacity(
                               duration: Duration(milliseconds: 1000),
                               opacity: delayEnded ? 1.0 : 0.0,
@@ -108,15 +166,15 @@ class _MainPageState extends State<HomePage> {
                                         : TextAlign.center,
                                     decoration: !_isSearch && !forceFocus
                                         ? InputDecoration(
-                                            hintText: "Search Shops",
-                                            hintStyle: TextStyle(
-                                                fontSize: 20,
-                                                color: Color(0x88FFFFFF)),
-                                            labelStyle: new TextStyle(
-                                                color: Color(0xFF424242)),
-                                            border: InputBorder.none)
+                                        hintText: "Search Shops",
+                                        hintStyle: TextStyle(
+                                            fontSize: 20,
+                                            color: Color(0x88FFFFFF)),
+                                        labelStyle: new TextStyle(
+                                            color: Color(0xFF424242)),
+                                        border: InputBorder.none)
                                         : InputDecoration(
-                                            border: InputBorder.none),
+                                        border: InputBorder.none),
                                     style: TextStyle(
                                         fontSize: 20, color: Colors.white),
                                     onChanged: (text) {
@@ -134,24 +192,44 @@ class _MainPageState extends State<HomePage> {
                 ))),
         _isSearch
             ? Align(
-                alignment: Alignment.centerRight,
-                child: IconButton(
-                  icon: Icon(
-                    Icons.close,
-                    color: Colors.white,
-                  ),
-                  onPressed: _toggleSearch,
-                ),
-              )
+          alignment: Alignment.centerRight,
+          child: IconButton(
+            icon: Icon(
+              Icons.close,
+              color: Colors.white,
+            ),
+            onPressed: _toggleSearch,
+          ),
+        )
+            : _isFilter
+            ? IconButton(
+          icon: Icon(
+            Icons.close,
+            color: Colors.white,
+          ),
+          onPressed: () {
+            setState(() {
+              _isFilter = false;
+            });
+          },
+        )
             : IconButton(
-                icon: Icon(
-                  Icons.filter_list,
-                  color: Colors.white,
-                ),
-                onPressed: () {
-                  // TODO: add filter functionality
-                },
-              ),
+          icon: Icon(
+            Icons.filter_list,
+            color: Colors.white,
+          ),
+          onPressed: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (BuildContext context) =>
+                        FiltersPage()));
+//                      setState(() {
+//                        _isFilter = true;
+//                        delayEnded = true;
+//                      });
+          },
+        ),
       ],
     );
   }

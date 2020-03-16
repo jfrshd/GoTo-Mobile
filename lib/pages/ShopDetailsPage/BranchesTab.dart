@@ -22,9 +22,20 @@ class _BranchesTabState extends State<BranchesTab> {
   bool _error = false;
   List<Branch> _branches = List<Branch>();
 
+  @override
+  void setState(fn) {
+    if (mounted) super.setState(fn);
+  }
+
   void initState() {
     super.initState();
     if (_branches.length == 0) _loadBranches();
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
   }
 
   @override

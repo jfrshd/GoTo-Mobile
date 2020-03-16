@@ -2,10 +2,11 @@ import 'package:gotomobile/api.dart';
 import 'package:gotomobile/services/authService.dart';
 import 'package:http/http.dart' as http;
 
-Future<http.Response> getPosts({int page = 1}) async {
+Future<http.Response> getPosts({int shopID = -1, int page = 1}) async {
   String token = await getAuthToken();
-
-  return http.get(API.postsAPI + "?page=" + page.toString(),
+  String route =
+      shopID == -1 ? API.postsAPI : API.shopPosts + "/" + shopID.toString();
+  return http.get(route + "?page=" + page.toString(),
       headers: {"Authorization": token}).timeout(Duration(seconds: 2));
 }
 

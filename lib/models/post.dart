@@ -27,7 +27,7 @@ class Post {
     return Post(
       id: _json['id'] as int,
       shopId: _json['shop_id'] as int,
-      shop: !_json.containsKey('shop') ? null : Shop.fromJson(_json['shop']),
+      shop: _json.containsKey('shop') ? Shop.fromJson(_json['shop']) : null,
       description: _json['description'] as String,
       views: _json['views'] as int,
       datePosted: DateTime.parse(_json['date_accepted']),

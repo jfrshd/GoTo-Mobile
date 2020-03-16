@@ -21,7 +21,7 @@ class ErrorPage extends StatelessWidget {
         IconButton(
           iconSize: 50,
           icon: Icon(Icons.refresh),
-          onPressed: () => _loadData(error: true),
+          onPressed: () => _loadData(),
         ),
       ],
     ));

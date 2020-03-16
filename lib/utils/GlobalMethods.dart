@@ -37,13 +37,10 @@ class GlobalMethods {
   }
 
   static showSnackBar(String e, GlobalKey<ScaffoldState> _scaffoldKey) {
-    print(e);
-    print(_scaffoldKey);
     final snackBar = SnackBar(
       content: Text(e),
       duration: Duration(seconds: 2),
     );
-    print(snackBar);
     _scaffoldKey.currentState.showSnackBar(snackBar);
   }
 
