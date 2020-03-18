@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 class Category {
   final int id;
   final String name;
@@ -13,5 +15,17 @@ class Category {
       thumbnail: json['thumbnail'] as String,
       selected: json['selected'] == 1 ? true : false,
     );
+  }
+
+  dynamic toJson() => {
+        'id': id,
+        'name': name,
+        'thumbnail': thumbnail,
+        'selected': selected,
+      };
+
+  @override
+  String toString() {
+    return JsonEncoder.withIndent('  ').convert(this);
   }
 }

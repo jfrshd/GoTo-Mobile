@@ -98,109 +98,112 @@ class _MainPageState extends State<HomePage> {
       actions: <Widget>[
         _isFilter
             ? Expanded(
-            flex: 1,
-            child: Padding(
-              padding: EdgeInsets.only(left: 50),
-              child: Row(
-                children: <Widget>[
-                  Expanded(
-                    child: Padding(
-                        padding: EdgeInsets.fromLTRB(15, 0, 15, 0),
-                        child: Stack(children: [
-                          Center(
-                            child: Text(
-                              'Filters',
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontFamily: "ProductSans",
-                                color: Colors.white,
+                flex: 1,
+                child: Padding(
+                  padding: EdgeInsets.only(left: 50),
+                  child: Row(
+                    children: <Widget>[
+                      Expanded(
+                        child: Padding(
+                            padding: EdgeInsets.fromLTRB(15, 0, 15, 0),
+                            child: Stack(children: [
+                              Center(
+                                child: Text(
+                                  'Filters',
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontFamily: "ProductSans",
+                                    color: Colors.white,
+                                  ),
+                                ),
                               ),
-                            ),
-                          ),
-                        ])),
+                            ])),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            ))
+                ))
             : Expanded(
-            flex: 1,
-            child: Padding(
-                padding: EdgeInsets.only(left: 50),
-                child: Row(
-                  children: <Widget>[
-                    Expanded(
-                      child: Padding(
-                          padding: EdgeInsets.fromLTRB(15, 0, 15, 0),
-                          child: Stack(children: [
-                            delayEnded
-                                ? SizedBox.fromSize(size: Size(0, 0))
-                                : Center(
-                              child: Text(
-                                searchText,
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  fontFamily: "ProductSans",
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ),
-                            AnimatedOpacity(
-                              duration: Duration(milliseconds: 1000),
-                              opacity: delayEnded ? 1.0 : 0.0,
-                              child: Container(
-                                margin: EdgeInsets.symmetric(vertical: 5),
-                                decoration: BoxDecoration(
-                                  color: Colors.blue[500],
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(100),
-                                  ),
-                                ),
-                                child: Center(
-                                  child: TextField(
-                                    controller: _textEditingController,
-                                    cursorColor: Colors.grey,
-                                    focusNode: _focusNode,
-                                    autofocus: forceFocus,
-                                    textAlign: _isSearch
-                                        ? TextAlign.center
-                                        : TextAlign.center,
-                                    decoration: !_isSearch && !forceFocus
-                                        ? InputDecoration(
-                                        hintText: "Search Shops",
-                                        hintStyle: TextStyle(
+                flex: 1,
+                child: Padding(
+                    padding: EdgeInsets.only(left: 50),
+                    child: Row(
+                      children: <Widget>[
+                        Expanded(
+                          child: Padding(
+                              padding: EdgeInsets.fromLTRB(15, 0, 15, 0),
+                              child: Stack(children: [
+                                delayEnded
+                                    ? SizedBox.fromSize(size: Size(0, 0))
+                                    : Center(
+                                        child: Text(
+                                          searchText,
+                                          style: TextStyle(
                                             fontSize: 20,
-                                            color: Color(0x88FFFFFF)),
-                                        labelStyle: new TextStyle(
-                                            color: Color(0xFF424242)),
-                                        border: InputBorder.none)
-                                        : InputDecoration(
-                                        border: InputBorder.none),
-                                    style: TextStyle(
-                                        fontSize: 20, color: Colors.white),
-                                    onChanged: (text) {
-                                      setState(() {
-                                        searchText = text;
-                                      });
-                                    },
+                                            fontFamily: "ProductSans",
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ),
+                                AnimatedOpacity(
+                                  duration: Duration(milliseconds: 1000),
+                                  opacity: delayEnded ? 1.0 : 0.0,
+                                  child: Container(
+                                    margin: EdgeInsets.symmetric(vertical: 5),
+                                    decoration: BoxDecoration(
+                                      color: Colors.blue[500],
+                                      borderRadius: BorderRadius.all(
+                                        Radius.circular(100),
+                                      ),
+                                    ),
+                                    child: Center(
+                                      child: TextField(
+                                        controller: _textEditingController,
+                                        cursorColor: Colors.grey,
+                                        focusNode: _focusNode,
+                                        autofocus: forceFocus,
+                                        textAlign: _isSearch
+                                            ? TextAlign.center
+                                            : TextAlign.center,
+                                        decoration: !_isSearch && !forceFocus
+                                            ? InputDecoration(
+                                                hintText: "Search Shops",
+                                                hintStyle: TextStyle(
+                                                    fontSize: 20,
+                                                    color: Color(0x88FFFFFF)),
+                                                labelStyle: new TextStyle(
+                                                    color: Color(0xFF424242)),
+                                                border: InputBorder.none)
+                                            : InputDecoration(
+                                                border: InputBorder.none),
+                                        style: TextStyle(
+                                            fontSize: 20, color: Colors.white),
+                                        onSubmitted: (text) {
+                                          // TODO: onSubmit
+                                        },
+                                        onChanged: (text) {
+                                          setState(() {
+                                            searchText = text;
+                                          });
+                                        },
+                                      ),
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ),
-                          ])),
-                    ),
-                  ],
-                ))),
+                              ])),
+                        ),
+                      ],
+                    ))),
         _isSearch
             ? Align(
-          alignment: Alignment.centerRight,
-          child: IconButton(
-            icon: Icon(
-              Icons.close,
-              color: Colors.white,
-            ),
-            onPressed: _toggleSearch,
-          ),
-        )
+                alignment: Alignment.centerRight,
+                child: IconButton(
+                  icon: Icon(
+                    Icons.close,
+                    color: Colors.white,
+                  ),
+                  onPressed: _toggleSearch,
+                ),
+              )
             : _isFilter
             ? IconButton(
           icon: Icon(

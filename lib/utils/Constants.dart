@@ -22,10 +22,16 @@ class Constants {
   static String atLeastThree = 'Choose at least three categories';
   static String atLeastOne = 'Choose at least one region';
 
-  static String categoriesError = "Failed to load categories.";
-  static String branchesError = "Failed to load branches.";
-  static String postsError = "Failed to load posts.";
-  static String shopsSearchError = "Failed to search shops.";
-  static String postsPaginationError = "Failed to load more posts.";
-  static String regionsError = "Failed to load regions.";
+  static String categoriesFail = "Failed to load categories.";
+  static String categoriesError = "Error loading categories.";
+  static String branchesFail = "Failed to load branches.";
+  static String branchesError = "Error loading branches.";
+  static String postsFail = "Failed to load posts.";
+  static String postsError = "Error loading posts.";
+  static String shopsSearchFail = "Failed to search shops.";
+  static String shopsSearchError = "Error loading shops.";
+  static String postsPaginationFail = "Failed to load more posts.";
+  static String postsPaginationError = "Error loading more posts.";
+  static String regionsFail = "Failed to load regions.";
+  static String regionsError = "Error loading regions.";
 }

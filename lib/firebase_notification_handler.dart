@@ -1,7 +1,8 @@
 import 'dart:io';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:gotomobile/services/authService.dart';
+import 'package:gotomobile/main.dart';
+import 'package:gotomobile/redux/actions/account_actions.dart';
 import 'package:gotomobile/utils/SharedPreferencesHelper.dart';
 
 import 'utils/Constants.dart';
@@ -15,14 +16,16 @@ class FirebaseNotifications {
   }
 
   void firebaseCloudMessagingListeners() {
-    if (Platform.isIOS) iOSPermission();
+	  if (Platform.isIOS) iOSPermission();
 
-    _firebaseMessaging.getToken().then((token) async {
-      await SharedPreferencesHelper.setString(Constants.firebaseToken, token);
-      print("firebase token");
-      print(token);
-      updateFirebaseToken(token);
-    });
+	  _firebaseMessaging.getToken().then((firebaseToken) async {
+		  await SharedPreferencesHelper.setString(
+			  Constants.firebaseToken, firebaseToken);
+//      String authToken =
+//          await SharedPreferencesHelper.getString(Constants.authToken);
+		  store.dispatch(firebaseSetupAction(firebaseToken));
+//      AccountService.updateFirebaseToken(authToken, firebaseToken);
+	  });
 
 //    _firebaseMessaging.configure(
 //      onMessage: (Map<String, dynamic> message) async {

@@ -1,32 +1,62 @@
 //import 'dart:html' show HttpRequest;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_redux/flutter_redux.dart';
 import 'package:gotomobile/pages/ChooseRegionsPage.dart';
 import 'package:gotomobile/pages/HomePage.dart';
+import 'package:gotomobile/redux/actions/account_actions.dart';
+import 'package:gotomobile/redux/actions/category_actions.dart';
+import 'package:gotomobile/redux/reducers/reducers.dart';
 import 'package:gotomobile/routes.dart';
 import 'package:gotomobile/utils/Constants.dart';
 import 'package:gotomobile/utils/SharedPreferencesHelper.dart';
+import 'package:redux/redux.dart';
+import 'package:redux_logging/redux_logging.dart';
+import 'package:redux_thunk/redux_thunk.dart';
 
 import 'Pages/ChooseCategoriesPage.dart';
 import 'firebase_notification_handler.dart';
+import 'redux/states/app_state.dart';
 
-void main() {
-  runApp(MyApp());
+final Store<AppState> store = Store<AppState>(
+  appReducer,
+  initialState: AppState(),
+  middleware: [
+    thunkMiddleware,
+    new LoggingMiddleware.printer()
+//      SearchMiddleware(GithubClient()),
+//      EpicMiddleware<SearchState>(SearchEpic(GithubClient())),
+  ],
+);
+
+void main() async {
+  print('Initial state: ${store.state}');
+
+  runApp(MyApp(store));
 }
 
 /// This Widget is the main application widget.
 class MyApp extends StatefulWidget {
+  final Store<AppState> store;
+
+  MyApp(this.store);
+
   MyAppState createState() => MyAppState();
 }
 
 class MyAppState extends State<MyApp> {
-    bool _isFirstLaunch;
+  bool _isFirstLaunch;
   Widget _firstPage;
 
   void checkFirstTime() async {
     _isFirstLaunch =
         await SharedPreferencesHelper.getBool(Constants.firstTimeCode);
     setState(() {});
+  }
+
+  initCalls() {
+    widget.store.dispatch(authenticateAction());
+    widget.store.dispatch(fetchCategoriesAction());
   }
 
   @override
@@ -37,42 +67,29 @@ class MyAppState extends State<MyApp> {
     }
     _firstPage = _isFirstLaunch ? ChooseCategoriesPage() : HomePage();
 
+//    new Future(initCalls);
+    initCalls();
+
     new FirebaseNotifications().setUpFirebase();
 
-    return MaterialApp(
-        theme: ThemeData(
+    return StoreProvider<AppState>(
+      store: widget.store,
+      child: MaterialApp(
+          theme: ThemeData(
             primaryColor: Colors.blue,
             pageTransitionsTheme: PageTransitionsTheme(builders: {
-                TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
-                TargetPlatform.android: FadeUpwardsPageTransitionsBuilder(),
+              TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+              TargetPlatform.android: FadeUpwardsPageTransitionsBuilder(),
             }),
-            // Define the default brightness and colors.
-
-            /* brightness: Brightness.dark,
-          primaryColor: Colors.lightBlue[800],
-          accentColor: Colors.cyan[600],*/
-
-            // Define the default font family.
             fontFamily: 'ProductSans',
-
-            // Define the default TextTheme. Use this to specify the default
-            // text styling for headlines, titles, bodies of text, and more.
-//          textTheme: TextTheme(
-//            headline: TextStyle(fontSize: 72.0, fontWeight: FontWeight.bold),
-//            title: TextStyle(fontSize: 36.0, fontStyle: FontStyle.italic),
-//            body1: TextStyle(
-////                fontSize: 25.0,
-//              fontFamily: 'CenturyGothic',
-////                fontWeight: FontWeight.bold
-//            ),
-//          ),
-        ),
-        home: _firstPage,
-        routes: <String, WidgetBuilder>{
+          ),
+          home: _firstPage,
+          routes: <String, WidgetBuilder>{
             Routes.categoriesRoute: (BuildContext context) =>
                 ChooseCategoriesPage(),
             Routes.regionsRoute: (BuildContext context) => ChooseRegionsPage(),
             Routes.homePageRoute: (BuildContext context) => HomePage(),
-        });
-    }
+          }),
+    );
+  }
 }

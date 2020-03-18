@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:gotomobile/models/category.dart';
-import 'package:gotomobile/services/categoriesService.dart';
+import 'package:gotomobile/services/categories_service.dart';
 import 'package:gotomobile/widgets/Filter/CategoriesCardGridItem.dart';
 
 class CategoriesCard extends StatefulWidget {
@@ -67,7 +67,7 @@ class _CategoriesCardState extends State<CategoriesCard> {
 //      _loadingCategories = true;
 //      _error = false;
 //    });
-    getCategories().then((response) {
+    CategoriesService.fetchCategories('').then((response) {
       final parsed = Map<String, dynamic>.from(json.decode(response.body));
       if (parsed["status"] == "success") {
         final categories = parsed['categories']

@@ -37,7 +37,12 @@ dependencies:
   carousel_slider: ^1.4.1
   stack_overlay: ^0.1.1
 
-
+  flutter_redux: ^0.6.0
+  async: ^2.4.0
+  redux_epics: ^0.13.0
+  rxdart: ^0.23.1
+  redux_thunk: ^0.3.0
+  redux_logging: ^0.4.0
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
