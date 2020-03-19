@@ -32,6 +32,16 @@ class FailFirebaseAction {}
 
 class ErrorFirebaseAction {}
 
+class SwitchingSplashScreenAction {}
+
+class CheckFirstLaunchAction {}
+
+class ToggleFirstLaunchAction {
+  final bool isFirstTime;
+
+  ToggleFirstLaunchAction(this.isFirstTime);
+}
+
 ThunkAction<AppState> authenticateAction() {
   return (Store<AppState> store) async {
     store.dispatch(LoadingAuthAction());
@@ -64,21 +74,23 @@ ThunkAction<AppState> authenticateAction() {
   };
 }
 
-ThunkAction<AppState> firebaseSetupAction(String firebaseToken) {
+ThunkAction<AppState> firebaseSetupAction(bool fromSharedPref,
+    {String firebaseToken, int accountID}) {
   return (Store<AppState> store) async {
-    store.dispatch(LoadingFirebaseAction());
-
-    AccountService.updateFirebaseToken(
-            store.state.account.authToken, firebaseToken)
-        .then((response) {
-      final parsed = Map<String, dynamic>.from(json.decode(response.body));
-      if (parsed['status'] == 'success' || parsed['status'] == 'fail') {
-        store.dispatch(UpdateFirebaseAction(parsed["account_id"]));
-      }
-    }).catchError((error) {
-      print('updateFirebaseToken error: ');
-      print(error);
-      store.dispatch(LoadingFirebaseAction());
-    });
+    if (fromSharedPref)
+      store.dispatch(UpdateFirebaseAction(accountID));
+    else
+      AccountService.updateFirebaseToken(
+          store.state.account.authToken, firebaseToken)
+          .then((response) {
+        final parsed = Map<String, dynamic>.from(json.decode(response.body));
+        if (parsed['status'] == 'success' || parsed['status'] == 'fail') {
+          store.dispatch(UpdateFirebaseAction(parsed["account_id"]));
+        }
+      }).catchError((error) {
+        print('updateFirebaseToken error: ');
+        print(error);
+        store.dispatch(ErrorFirebaseAction());
+      });
   };
 }

@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:gotomobile/pages/ChooseRegionsPage.dart';
 import 'package:gotomobile/pages/HomePage.dart';
+import 'package:gotomobile/pages/SplashScreen.dart';
 import 'package:gotomobile/redux/actions/account_actions.dart';
-import 'package:gotomobile/redux/actions/category_actions.dart';
 import 'package:gotomobile/redux/reducers/reducers.dart';
 import 'package:gotomobile/routes.dart';
 import 'package:gotomobile/utils/Constants.dart';
@@ -15,7 +15,6 @@ import 'package:redux_logging/redux_logging.dart';
 import 'package:redux_thunk/redux_thunk.dart';
 
 import 'Pages/ChooseCategoriesPage.dart';
-import 'firebase_notification_handler.dart';
 import 'redux/states/app_state.dart';
 
 final Store<AppState> store = Store<AppState>(
@@ -45,33 +44,21 @@ class MyApp extends StatefulWidget {
 }
 
 class MyAppState extends State<MyApp> {
-  bool _isFirstLaunch;
-  Widget _firstPage;
+  init() async {
+    store.dispatch(authenticateAction());
 
-  void checkFirstTime() async {
-    _isFirstLaunch =
-        await SharedPreferencesHelper.getBool(Constants.firstTimeCode);
-    setState(() {});
+    store.dispatch(ToggleFirstLaunchAction(
+        await SharedPreferencesHelper.getBool(Constants.firstTimeCode)));
   }
 
-  initCalls() {
-    widget.store.dispatch(authenticateAction());
-    widget.store.dispatch(fetchCategoriesAction());
+  @override
+  void initState() {
+    super.initState();
+    init();
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_isFirstLaunch == null) {
-      checkFirstTime();
-      return MaterialApp(home: Scaffold());
-    }
-    _firstPage = _isFirstLaunch ? ChooseCategoriesPage() : HomePage();
-
-//    new Future(initCalls);
-    initCalls();
-
-    new FirebaseNotifications().setUpFirebase();
-
     return StoreProvider<AppState>(
       store: widget.store,
       child: MaterialApp(
@@ -83,7 +70,7 @@ class MyAppState extends State<MyApp> {
             }),
             fontFamily: 'ProductSans',
           ),
-          home: _firstPage,
+          home: SplashScreen(widget.store),
           routes: <String, WidgetBuilder>{
             Routes.categoriesRoute: (BuildContext context) =>
                 ChooseCategoriesPage(),

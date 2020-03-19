@@ -15,17 +15,22 @@ class FirebaseNotifications {
     firebaseCloudMessagingListeners();
   }
 
-  void firebaseCloudMessagingListeners() {
-	  if (Platform.isIOS) iOSPermission();
+  Future<void> firebaseCloudMessagingListeners() async {
+    if (Platform.isIOS) iOSPermission();
+    store.dispatch(LoadingFirebaseAction());
+    int accountID = await SharedPreferencesHelper.getInt(Constants.accountID);
+    if (accountID != -1)
+      store.dispatch(firebaseSetupAction(true, accountID: accountID));
 
-	  _firebaseMessaging.getToken().then((firebaseToken) async {
-		  await SharedPreferencesHelper.setString(
-			  Constants.firebaseToken, firebaseToken);
-//      String authToken =
-//          await SharedPreferencesHelper.getString(Constants.authToken);
-		  store.dispatch(firebaseSetupAction(firebaseToken));
-//      AccountService.updateFirebaseToken(authToken, firebaseToken);
-	  });
+    _firebaseMessaging.getToken().then((firebaseToken) async {
+      await SharedPreferencesHelper.setString(
+          Constants.firebaseToken, firebaseToken);
+      store.dispatch(firebaseSetupAction(false, firebaseToken: firebaseToken));
+    }).catchError((error) {
+      print("firebase error:");
+      print(error);
+      store.dispatch(ErrorFirebaseAction);
+    });
 
 //    _firebaseMessaging.configure(
 //      onMessage: (Map<String, dynamic> message) async {

@@ -1,7 +1,7 @@
 class Constants {
   // Shared Preferences Codes
   static String categoriesCode = "Categories";
-  static String regionCode = "Regions";
+  static String regionsCode = "Regions";
   static String firstTimeCode = "FirstTime";
   static String authToken = "AuthToken";
   static String accountID = "AccountID";

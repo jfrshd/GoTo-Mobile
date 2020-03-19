@@ -1,58 +1,55 @@
 import 'dart:convert';
 
-import 'package:gotomobile/models/category.dart';
+import 'package:gotomobile/models/region.dart';
 import 'package:meta/meta.dart';
 
 @immutable
-class CategoryState {
+class RegionState {
   final bool loading, failLoad, errorLoad;
   final bool updating, failUpdate, errorUpdate;
-  final List<Category> categories;
+  final List<Region> regions;
 
-  const CategoryState({
+  const RegionState({
     this.loading = false,
     this.failLoad = false,
     this.errorLoad = false,
     this.updating = false,
     this.failUpdate = false,
     this.errorUpdate = false,
-    this.categories = const [],
+    this.regions = const [],
   });
 
-  CategoryState copyWith(
+  RegionState copyWith(
       {loading,
       failLoad,
       errorLoad,
       updating,
       failUpdate,
       errorUpdate,
-      categories}) {
-    return CategoryState(
+      regions}) {
+    return RegionState(
       loading: loading ?? this.loading,
       failLoad: failLoad ?? this.failLoad,
       errorLoad: errorLoad ?? this.errorLoad,
       updating: updating ?? this.updating,
       failUpdate: failUpdate ?? this.failUpdate,
       errorUpdate: errorUpdate ?? this.errorUpdate,
-      categories: categories ?? this.categories,
+      regions: regions ?? this.regions,
     );
   }
 
-  dynamic toJson() =>
-      {
-          'loading': loading,
-          'failLoad': failLoad,
-          'errorLoad': errorLoad,
-          'updating': updating,
-          'failUpdate': failUpdate,
-          'errorUpdate': errorUpdate,
-          'categories': categories.map((c) =>
-//        c.name + " | " +
-          c.selected.toString()).toList(),
+  dynamic toJson() => {
+        'loading': loading,
+        'failLoad': failLoad,
+        'errorLoad': errorLoad,
+        'updating': updating,
+        'failUpdate': failUpdate,
+        'errorUpdate': errorUpdate,
+        'regions': regions,
       };
 
   @override
   String toString() {
-    return 'CategoryState: ${JsonEncoder.withIndent('  ').convert(this)}';
+    return 'RegionState: ${JsonEncoder.withIndent('  ').convert(this)}';
   }
 }

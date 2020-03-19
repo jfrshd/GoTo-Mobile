@@ -21,7 +21,7 @@ class Category {
         'id': id,
         'name': name,
         'thumbnail': thumbnail,
-        'selected': selected,
+        'selected': selected ? 1 : 0,
       };
 
   @override
