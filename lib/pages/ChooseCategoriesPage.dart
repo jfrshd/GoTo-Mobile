@@ -157,36 +157,36 @@ class _ChooseCategoriesPageState extends State<ChooseCategoriesPage> {
   }
 
   AppBar createAppBar() {
-      return AppBar(
-          automaticallyImplyLeading: false,
-          centerTitle: true,
-          title: Text('Favorites'),
-          actions: <Widget>[
-              IconButton(
-                  onPressed: () {
-                      Alert(
-                          image: Image.asset('assets/images/info.png'),
-                          title: "",
-                          buttons: [],
-                          context: context,
+    return AppBar(
+      automaticallyImplyLeading: false,
+      centerTitle: true,
+      title: Text('Favorites'),
+      actions: <Widget>[
+        IconButton(
+          onPressed: () {
+            Alert(
+                    image: Image.asset('assets/images/info.png'),
+                    title: "",
+                    buttons: [],
+                    context: context,
 //                        type: AlertType.none,
-                          style: AlertStyle(
-                              animationType: AnimationType.grow,
-                              titleStyle: TextStyle(fontSize: 0),
-                              isCloseButton: false,
-                              backgroundColor: Colors.blue,
-                              descStyle: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 15,
-                                  fontStyle: FontStyle.italic,
-                              )),
-                          desc: Constants.categoriesPageDesc)
-                          .show();
-                  },
-                  icon: Icon(Icons.info),
-              ),
-          ],
-      );
+                    style: AlertStyle(
+                        animationType: AnimationType.grow,
+                        titleStyle: TextStyle(fontSize: 0),
+                        isCloseButton: false,
+                        backgroundColor: Colors.blue,
+                        descStyle: TextStyle(
+                          color: Colors.white,
+                          fontSize: 15,
+                          fontStyle: FontStyle.italic,
+                        )),
+                    desc: Constants.categoriesPageDesc)
+                .show();
+          },
+          icon: Icon(Icons.info),
+        ),
+      ],
+    );
   }
 
   void showError(String e) {
