@@ -9,6 +9,6 @@ class PostsTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return new PostsList(shop: shop);
+    return Container(color: Colors.grey[100], child: new PostsList(shop: shop));
   }
 }

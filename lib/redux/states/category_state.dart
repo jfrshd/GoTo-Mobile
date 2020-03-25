@@ -38,17 +38,14 @@ class CategoryState {
     );
   }
 
-  dynamic toJson() =>
-      {
-          'loading': loading,
-          'failLoad': failLoad,
-          'errorLoad': errorLoad,
-          'updating': updating,
-          'failUpdate': failUpdate,
-          'errorUpdate': errorUpdate,
-          'categories': categories.map((c) =>
-//        c.name + " | " +
-          c.selected.toString()).toList(),
+  dynamic toJson() => {
+        'loading': loading,
+        'failLoad': failLoad,
+        'errorLoad': errorLoad,
+        'updating': updating,
+        'failUpdate': failUpdate,
+        'errorUpdate': errorUpdate,
+        'categories': categories,
       };
 
   @override

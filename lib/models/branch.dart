@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 class Branch {
   int id, shopId;
   String name, phone;
@@ -14,5 +16,19 @@ class Branch {
       cdx: double.parse(_json['cdx'].toString()),
       cdy: double.parse(_json['cdy'].toString()),
     );
+  }
+
+  dynamic toJson() => {
+        'id': id,
+        'shopId': shopId,
+        'name': name,
+        'phone': phone,
+        'cdx': cdx,
+        'cdy': cdy,
+      };
+
+  @override
+  String toString() {
+    return JsonEncoder.withIndent('  ').convert(this);
   }
 }

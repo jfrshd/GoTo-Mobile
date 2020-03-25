@@ -1,159 +1,169 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:gotomobile/models/post.dart';
+import 'package:flutter_redux/flutter_redux.dart';
 import 'package:gotomobile/models/shop.dart';
 import 'package:gotomobile/pages/ErrorPage.dart';
-import 'package:gotomobile/services/postsService.dart';
+import 'package:gotomobile/redux/actions/post_actions.dart';
+import 'package:gotomobile/redux/actions/shop_actions.dart';
+import 'package:gotomobile/redux/actions/shop_post_actions.dart';
+import 'package:gotomobile/redux/states/app_state.dart';
+import 'package:gotomobile/redux/states/post_state.dart';
 import 'package:gotomobile/utils/Constants.dart';
 import 'package:gotomobile/widgets/post/PostItem.dart';
+import 'package:redux/redux.dart';
 
 import 'colorLoader/ColorLoader4.dart';
 
-class PostsList extends StatefulWidget {
+class PostsList extends StatelessWidget {
   final Shop shop;
 
   PostsList({this.shop});
 
-  @override
-  _PostsListState createState() => _PostsListState();
-}
-
-class _PostsListState extends State<PostsList> {
   ScrollController _scrollController = new ScrollController();
   GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
       GlobalKey<RefreshIndicatorState>();
 
-  bool _moreToLoad = true;
-  bool _error = false;
-  bool _errorLoadingMore = false;
-  bool _loadingPosts = false;
-  int _currentpage = 1;
-
-  List<Post> _posts = List();
-
-  @override
-  void initState() {
-    super.initState();
-    _scrollController.addListener(_scrollListener);
-    if (_posts.length == 0) loadPosts();
-  }
-
-  @override
-  void dispose() {
-    _scrollController.dispose();
-    super.dispose();
+  init(_ViewModel vm) {
+    _scrollController.addListener(() => _scrollListener(vm));
+    loadPosts(vm);
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_error) {
-      return ErrorPage(Constants.postsError, loadPosts);
-    }
-    return Container(
-      child: _posts.length == 0
-          ? Center(
-              child: ColorLoader4(
-                  color1: Colors.blue,
-                  color2: Colors.blue[300],
-                  color3: Colors.blue[100]),
-            )
-          : RefreshIndicator(
-              key: _refreshIndicatorKey,
-              onRefresh: loadPosts,
-              color: Theme.of(context).primaryColor,
-              child: ListView.builder(
-                controller: widget.shop == null ? _scrollController : null,
-                itemCount: _posts.length,
-                itemBuilder: (BuildContext context, int index) {
-                  if (index == _posts.length) {
-                    if (_moreToLoad) {
-                      if (_loadingPosts)
-                        return Center(
-                          child: Padding(
-                            padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                            child: ColorLoader4(
-                                color1: Colors.blue,
-                                color2: Colors.blue[300],
-                                color3: Colors.blue[100]),
-                          ),
-                        );
-                      else if (_errorLoadingMore)
-                        return Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Center(
-                              child: Text(Constants.postsPaginationError)),
-                        );
-                    }
-                    return Container();
-                  } else {
-                    _posts[index].shop ??= widget.shop;
-                    return PostItem(index, _posts[index], true);
-                  }
-                },
-              ),
-            ),
-    );
-  }
+    return StoreConnector<AppState, _ViewModel>(
+        onInitialBuild: (_ViewModel vm) => init(vm),
+        onDispose: (store) => _scrollController.dispose(),
+        converter: (store) {
+          return _ViewModel.fromStore(store, shop);
+        },
+        builder: (BuildContext context, _ViewModel vm) {
+          if (vm.postState.failLoad || vm.postState.errorLoad)
+            return ErrorPage(
+              vm.postState.failLoad
+                  ? Constants.postsFail
+                  : Constants.postsError,
+              loadPosts,
+              extraParams: vm,
+            );
 
-  Future<void> loadPosts() {
-    _refreshIndicatorKey.currentState?.show();
-    setState(() {
-      _error = false;
-      _loadingPosts = true;
-    });
-    final request = widget.shop == null
-        ? getPosts(page: _currentpage)
-        : getPosts(shopID: widget.shop.id, page: _currentpage);
-
-    return request.then((response) {
-      final parsed = Map<String, dynamic>.from(json.decode(response.body));
-      if (parsed["status"] == "success") {
-        final posts = parsed['posts']['data']
-            .map<Post>((json) => Post.fromJson(json))
-            .toList();
-
-        setState(() {
-          _error = false;
-          _errorLoadingMore = false;
-          _loadingPosts = false;
-          // TODO: bdna nshuf mawdo3 l filter krml ma yntz3 l sort on refresh aw pagination
-          _posts.addAll(posts);
-          _currentpage += 1;
-          if (_currentpage > parsed['posts']["last_page"]) _moreToLoad = false;
+          return Container(
+            child: vm.postState.posts.isEmpty && vm.postState.loading
+                ? Center(
+                    child: ColorLoader4(
+                        color1: Colors.blue,
+                        color2: Colors.blue[300],
+                        color3: Colors.blue[100]),
+                  )
+                : RefreshIndicator(
+                    key: _refreshIndicatorKey,
+                    onRefresh: () {
+                      return loadPosts(vm);
+                    },
+                    color: Theme.of(context).primaryColor,
+                    child: ListView.builder(
+                      controller: shop == null ? _scrollController : null,
+                      itemCount: vm.postState.posts.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        if (index == vm.postState.posts.length) {
+                          if (vm.postState.moreToLoad) {
+                            if (vm.postState.loading)
+                              return Center(
+                                child: Padding(
+                                  padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                                  child: ColorLoader4(
+                                      color1: Colors.blue,
+                                      color2: Colors.blue[300],
+                                      color3: Colors.blue[100]),
+                                ),
+                              );
+                            else if (vm.postState.errorLoadingMore)
+                              return Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Center(
+                                    child:
+                                        Text(Constants.postsPaginationError)),
+                              );
+                          }
+                          return Container();
+                        } else {
+                          vm.postState.posts[index].shop ??= shop;
+                          return PostItem(
+                            index,
+                            vm.postState.posts[index],
+                            shop == null ? vm.selectShop : null,
+                          );
+                        }
+                      },
+                    ),
+                  ),
+          );
         });
-      }
-    }).catchError((e) {
-      print("getPosts error: ");
-      print(e);
-      setState(() {
-        _loadingPosts = false;
-        if (_currentpage == 1)
-          _error = true;
-        else {
-          _errorLoadingMore = true;
-        }
-      });
-    });
   }
 
-  _scrollListener() {
+  loadPosts(vm) {
+    return Future<void>(() => vm.fetchPosts(shop, _refreshIndicatorKey));
+  }
+
+  _scrollListener(_ViewModel vm) {
     if (_scrollController.offset >=
             _scrollController.position.maxScrollExtent &&
         !_scrollController.position.outOfRange) {
       print("reach the bottom");
       //TODO: Check if it's better to continuously load pages or wait for scroll.
-      if (!_loadingPosts) {
-        if (_moreToLoad) {
-          loadPosts();
+      if (!vm.postState.loading) {
+        if (vm.postState.moreToLoad) {
+          loadPosts(vm);
         }
       }
     }
 
     if (_scrollController.offset <=
-            _scrollController.position.minScrollExtent &&
+        _scrollController.position.minScrollExtent &&
         !_scrollController.position.outOfRange) {
       print("reach the top");
     }
+  }
+}
+
+class _ViewModel {
+  final PostState postState;
+  final Future<void> Function(Shop, GlobalKey<RefreshIndicatorState>)
+  fetchPosts;
+  final void Function(int, Shop, BuildContext) selectShop;
+
+  _ViewModel({
+    @required this.postState,
+    @required this.fetchPosts,
+    @required this.selectShop,
+  });
+
+  static _ViewModel fromStore(Store<AppState> store, Shop shop) {
+    PostState postState;
+    if (shop != null)
+      postState = new PostState(
+        loading: store.state.shopPostState.loading,
+        failLoad: store.state.shopPostState.failLoad,
+        errorLoad: store.state.shopPostState.errorLoad,
+        moreToLoad: store.state.shopPostState.moreToLoad,
+        errorLoadingMore: store.state.shopPostState.errorLoadingMore,
+        currentPage: store.state.shopPostState.currentPages[shop.id] ?? 1,
+        posts: store.state.shopPostState.shopPosts[shop.id] ?? [],
+      );
+    else
+      postState = store.state.postState;
+
+    return _ViewModel(
+      postState: postState,
+      fetchPosts:
+          (Shop shop, GlobalKey<RefreshIndicatorState> _refreshIndicatorKey) {
+        _refreshIndicatorKey.currentState?.show();
+        shop == null
+            ? store.dispatch(fetchPostsAction())
+            : store.dispatch(fetchShopPostsAction(shopID: shop.id));
+        return new Future<void>(() {});
+      },
+      selectShop: (int index, Shop shop, BuildContext context) =>
+          store.dispatch(
+              selectShopAction(index: index, shop: shop, context: context)),
+    );
   }
 }

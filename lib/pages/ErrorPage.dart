@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 class ErrorPage extends StatelessWidget {
   final String _errorText;
   final Function _loadData;
+  final dynamic extraParams;
 
-  ErrorPage(this._errorText, this._loadData);
+  ErrorPage(this._errorText, this._loadData, {this.extraParams});
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +22,7 @@ class ErrorPage extends StatelessWidget {
         IconButton(
           iconSize: 50,
           icon: Icon(Icons.refresh),
-          onPressed: () => _loadData(),
+          onPressed: () => _loadData(extraParams),
         ),
       ],
     ));

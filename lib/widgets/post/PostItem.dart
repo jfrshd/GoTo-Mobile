@@ -1,6 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:gotomobile/models/branch.dart';
+import 'package:gotomobile/models/models.dart';
 import 'package:gotomobile/models/post.dart';
 import 'package:gotomobile/utils/GlobalMethods.dart';
 import 'package:gotomobile/widgets/post/PostBodyImages.dart';
@@ -8,11 +9,11 @@ import 'package:gotomobile/widgets/post/PostFooter.dart';
 import 'package:gotomobile/widgets/post/PostHeader.dart';
 
 class PostItem extends StatelessWidget {
-  final int index;
+	final int index;
   final Post post;
-  final bool isHeaderClickable;
+  final void Function(int, Shop, BuildContext) selectShop;
 
-  PostItem(this.index, this.post, this.isHeaderClickable);
+  PostItem(this.index, this.post, this.selectShop);
 
   @override
   Widget build(BuildContext context) {
@@ -24,8 +25,8 @@ class PostItem extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             Padding(
-              padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
-              child: PostHeader(index, post, isHeaderClickable),
+				padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+				child: PostHeader(index, post, selectShop),
             ),
             Padding(
               padding: EdgeInsets.fromLTRB(16, 0, 16, 10),

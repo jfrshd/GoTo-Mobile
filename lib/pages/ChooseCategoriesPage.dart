@@ -158,8 +158,9 @@ class _ChooseCategoriesPageState extends State<ChooseCategoriesPage> {
 
   AppBar createAppBar() {
     return AppBar(
-      automaticallyImplyLeading: false,
+      automaticallyImplyLeading: true,
       centerTitle: true,
+      // TODO: "Favorites" aw "Categories" 🤔 since the regions page title is "Regions"
       title: Text('Favorites'),
       actions: <Widget>[
         IconButton(
@@ -190,42 +191,42 @@ class _ChooseCategoriesPageState extends State<ChooseCategoriesPage> {
   }
 
   void showError(String e) {
-      final snackBar = SnackBar(
-          content: Text(e),
-          duration: Duration(seconds: 2),
-      );
-      _scaffoldKey.currentState.showSnackBar(snackBar);
+	  final snackBar = SnackBar(
+		  content: Text(e),
+		  duration: Duration(seconds: 2),
+	  );
+	  _scaffoldKey.currentState.showSnackBar(snackBar);
   }
 
   void showChooseAtLeastThree() {
-      final snackBar = SnackBar(
-          content: Text(Constants.atLeastThree),
-          duration: Duration(seconds: 2),
-      );
-      _scaffoldKey.currentState.showSnackBar(snackBar);
+	  final snackBar = SnackBar(
+		  content: Text(Constants.atLeastThree),
+		  duration: Duration(seconds: 2),
+	  );
+	  _scaffoldKey.currentState.showSnackBar(snackBar);
   }
 }
 
 class _ViewModel {
-    final bool isFirstLaunch;
-    final CategoryState categoryState;
-    final void Function() fetchCategories;
-    final void Function(List<Category>, BuildContext) saveCategories;
+	final bool isFirstLaunch;
+	final CategoryState categoryState;
+	final void Function() fetchCategories;
+	final void Function(List<Category>, BuildContext) saveCategories;
 
-    _ViewModel({
-        @required this.isFirstLaunch,
-        @required this.categoryState,
-        @required this.fetchCategories,
-        @required this.saveCategories,
-    });
+	_ViewModel({
+		@required this.isFirstLaunch,
+		@required this.categoryState,
+		@required this.fetchCategories,
+		@required this.saveCategories,
+	});
 
-    static _ViewModel fromStore(Store<AppState> store) {
-        return _ViewModel(
-            isFirstLaunch: store.state.account.isFirstLaunch,
-            categoryState: store.state.categoryState,
-            fetchCategories: () => store.dispatch(fetchCategoriesAction()),
-            saveCategories: (List<Category> categories, BuildContext context) =>
-                store.dispatch(saveCategoriesAction(categories, context)),
-        );
-    }
+	static _ViewModel fromStore(Store<AppState> store) {
+		return _ViewModel(
+			isFirstLaunch: store.state.account.isFirstLaunch,
+			categoryState: store.state.categoryState,
+			fetchCategories: () => store.dispatch(fetchCategoriesAction()),
+			saveCategories: (List<Category> categories, BuildContext context) =>
+				store.dispatch(saveCategoriesAction(categories, context)),
+		);
+	}
 }

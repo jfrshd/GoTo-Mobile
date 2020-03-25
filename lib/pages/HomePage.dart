@@ -205,34 +205,34 @@ class _MainPageState extends State<HomePage> {
                 ),
               )
             : _isFilter
-            ? IconButton(
-          icon: Icon(
-            Icons.close,
-            color: Colors.white,
-          ),
-          onPressed: () {
-            setState(() {
-              _isFilter = false;
-            });
-          },
-        )
-            : IconButton(
-          icon: Icon(
-            Icons.filter_list,
-            color: Colors.white,
-          ),
-          onPressed: () {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (BuildContext context) =>
-                        FiltersPage()));
+                ? IconButton(
+                    icon: Icon(
+                      Icons.close,
+                      color: Colors.white,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _isFilter = false;
+                      });
+                    },
+                  )
+                : IconButton(
+                    icon: Icon(
+                      Icons.filter_list,
+                      color: Colors.white,
+                    ),
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (BuildContext context) =>
+                                  FiltersPage()));
 //                      setState(() {
 //                        _isFilter = true;
 //                        delayEnded = true;
 //                      });
-          },
-        ),
+                    },
+                  ),
       ],
     );
   }

@@ -1,110 +1,118 @@
 import 'package:flutter/material.dart';
-import 'package:gotomobile/models/shop.dart';
+import 'package:flutter_redux/flutter_redux.dart';
+import 'package:gotomobile/models/models.dart';
+import 'package:gotomobile/redux/actions/shop_actions.dart';
+import 'package:gotomobile/redux/states/app_state.dart';
+import 'package:redux/redux.dart';
 
 import 'AboutTab.dart';
 import 'BranchesTab.dart';
 import 'PostsTab.dart';
 import 'ShopDetailsHeader.dart';
 
-class ShopDetailsPage extends StatefulWidget {
+// TODO: clean all imports
+
+class ShopDetailsPage extends StatelessWidget {
   final String heroTag;
-  final Shop shop;
 
-  ShopDetailsPage({this.heroTag, this.shop});
+  ShopDetailsPage({@required this.heroTag});
 
-  @override
-  _CompanyDetailsPageState createState() => _CompanyDetailsPageState();
-}
-
-class _CompanyDetailsPageState extends State<ShopDetailsPage>
-    with TickerProviderStateMixin {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
-  ScrollController _scrollController = new ScrollController();
+  final ScrollController _scrollController = new ScrollController();
 
-  List<Tab> tabList = List();
-
-  TabController _tabController;
-
-  @override
-  void initState() {
-    tabList.add(new Tab(
-      text: 'About',
-    ));
-    tabList.add(new Tab(
-      text: 'Branches',
-    ));
-    tabList.add(new Tab(
-      text: 'Posts',
-    ));
-    _tabController =
-        new TabController(initialIndex: 2, vsync: this, length: tabList.length);
-
-    _scrollController.addListener(_scrollListener);
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    _tabController.dispose();
-    _scrollController.dispose();
-    super.dispose();
-  }
+  final List<Tab> tabList = [
+    Tab(text: 'About'),
+    Tab(text: 'Branches'),
+    Tab(text: 'Posts'),
+  ];
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        key: _scaffoldKey,
-        body: NestedScrollView(
-          controller: _scrollController,
-          headerSliverBuilder: (BuildContext context, bool boxIsScrolled) {
-            return <Widget>[
-              SliverList(
-                delegate: SliverChildListDelegate([
-                  ShopDetailsHeader(widget.shop, widget.heroTag, _scaffoldKey)
-                ]),
-              )
-            ];
-          },
-          body: DefaultTabController(
-            initialIndex: 2,
-            length: tabList.length,
-            child: Column(
-              children: <Widget>[
-                Container(
-                  child: TabBar(
-                      indicatorColor: Theme.of(context).primaryColor,
-                      indicatorSize: TabBarIndicatorSize.tab,
-                      labelColor: Colors.black,
-                      tabs: tabList),
-                ),
-                Expanded(
-                  child: TabBarView(
+    return StoreConnector<AppState, _ViewModel>(
+      onInitialBuild: (_ViewModel vm) {
+        _scrollController.addListener(_scrollListener);
+      },
+      onDispose: (Store<AppState> store) {
+        _scrollController.dispose();
+      },
+      converter: (store) {
+        return _ViewModel.fromStore(store);
+      },
+      builder: (BuildContext context, _ViewModel vm) {
+//      if (vm.shopState.failLoad || vm.shopState.errorLoad)
+//        return Scaffold(
+//            key: _scaffoldKey,
+//            backgroundColor: Colors.white,
+//            appBar: createAppBar(),
+//            body: ErrorPage(
+//                vm.categoryState.failLoad
+//                    ? Constants.categoriesFail
+//                    : Constants.categoriesError,
+//                vm.fetchCategories));
+
+        return Scaffold(
+          key: _scaffoldKey,
+          body: Container(
+              color: Theme.of(context).primaryColor,
+              child: SafeArea(
+                bottom: false,
+                child: Container(
+                    color: Colors.white,
+                    child: NestedScrollView(
+                      controller: _scrollController,
+                      headerSliverBuilder:
+                          (BuildContext context, bool boxIsScrolled) {
+                        return <Widget>[
+                          SliverList(
+                            delegate: SliverChildListDelegate([
+                              ShopDetailsHeader(vm.shop, heroTag, _scaffoldKey,
+                                  vm.toggleFollow)
+                            ]),
+                          )
+                        ];
+                      },
+                      body: DefaultTabController(
+                        initialIndex: 2,
+                        length: tabList.length,
+                        child: Column(
+                          children: <Widget>[
+                            Container(
+                              child: TabBar(
+                                  indicatorColor:
+                                      Theme.of(context).primaryColor,
+                                  indicatorSize: TabBarIndicatorSize.tab,
+                                  labelColor: Colors.black,
+                                  tabs: tabList),
+                            ),
+                            Expanded(
+                              child: TabBarView(
 //                    physics: NeverScrollableScrollPhysics(),
-                    children: tabList.map((Tab tab) {
-                      return _getPage(tab);
-                    }).toList(),
-                  ),
-                )
-              ],
-            ),
-          ),
-        ),
-      ),
+                                children: tabList.map((Tab tab) {
+                                  return _getPage(tab, vm.shop);
+                                }).toList(),
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                    )),
+              )),
+        );
+      },
     );
   }
 
-  Widget _getPage(Tab tab) {
-    switch (tab.text) {
-      case 'About':
-        return AboutTab(widget.shop.about);
-      case 'Branches':
-        return BranchesTab(widget.shop.id);
-      case 'Posts':
-        return PostsTab(widget.shop);
-    }
-    return AboutTab(widget.shop.about);
-  }
+	Widget _getPage(Tab tab, Shop shop) {
+		switch (tab.text) {
+			case 'About':
+				return AboutTab(shop.about);
+			case 'Branches':
+				return BranchesTab(shop.id);
+			case 'Posts':
+				return PostsTab(shop);
+		}
+		return AboutTab(shop.about);
+	}
 
   _scrollListener() {
     if (_scrollController.offset >=
@@ -117,12 +125,31 @@ class _CompanyDetailsPageState extends State<ShopDetailsPage>
 //          loadPosts();
 //        }
 //      }
-    }
+	}
 
-    if (_scrollController.offset <=
-            _scrollController.position.minScrollExtent &&
-        !_scrollController.position.outOfRange) {
-      print("reach the top");
-    }
+	if (_scrollController.offset <=
+		_scrollController.position.minScrollExtent &&
+		!_scrollController.position.outOfRange) {
+		print("reach the top");
+	}
   }
+}
+
+class _ViewModel {
+	final Shop shop;
+	final Function(int) toggleFollow;
+
+	_ViewModel({
+		@required this.shop,
+		@required this.toggleFollow,
+	});
+
+	static _ViewModel fromStore(Store<AppState> store) {
+		return _ViewModel(
+			shop: store.state.shopState.shops[store.state.shopState
+				.selectedShopId],
+			toggleFollow: (shopID) =>
+				store.dispatch(toggleFollowShopAction(shopID: shopID)),
+		);
+	}
 }

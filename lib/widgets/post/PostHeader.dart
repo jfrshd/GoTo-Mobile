@@ -1,7 +1,7 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_advanced_networkimage/provider.dart';
+import 'package:gotomobile/models/models.dart';
 import 'package:gotomobile/models/post.dart';
-import 'package:gotomobile/pages/ShopDetailsPage/ShopDetailsPage.dart';
 import 'package:gotomobile/utils/GlobalMethods.dart';
 
 import '../../api.dart';
@@ -9,9 +9,9 @@ import '../../api.dart';
 class PostHeader extends StatelessWidget {
   final int index;
   final Post post;
-  final bool isHeaderClickable;
+  final void Function(int, Shop, BuildContext) selectShop;
 
-  PostHeader(this.index, this.post, this.isHeaderClickable);
+  PostHeader(this.index, this.post, this.selectShop);
 
   @override
   Widget build(BuildContext context) {
@@ -19,25 +19,39 @@ class PostHeader extends StatelessWidget {
       contentPadding: EdgeInsets.only(left: 16),
       dense: true,
       leading: Hero(
-          tag: "shop" +
-              index.toString() +
-              post.shopId.toString() +
-              post.id.toString(),
-          child: Container(
-              decoration: new BoxDecoration(
-                color: Colors.grey, // border color
-                shape: BoxShape.circle,
-              ),
-              padding: EdgeInsets.all(0.5),
-              child: CircleAvatar(
-                radius: 22,
-                backgroundColor: Colors.white,
-                backgroundImage: CachedNetworkImageProvider(
-                    API.serverAddress + "/" + post.shop.logo,
-                    errorListener: () {
-                  print("error header");
-                }),
-              ))),
+        tag: "shop" +
+            index.toString() +
+            post.shopId.toString() +
+            post.id.toString(),
+        child: Container(
+          decoration: new BoxDecoration(
+            color: Colors.grey, // border color
+            shape: BoxShape.circle,
+          ),
+          padding: EdgeInsets.all(0.5),
+          child: CircleAvatar(
+            radius: 22,
+            backgroundColor: Colors.white,
+            backgroundImage: AdvancedNetworkImage(
+              API.serverAddress + "/" + post.shop.logo,
+              useDiskCache: true,
+              cacheRule: CacheRule(maxAge: const Duration(days: 7)),
+              loadedCallback: () {
+                // TODO: handle
+                print('It works!');
+              },
+              loadFailedCallback: () {
+                // TODO: handle
+                print('Oh, no!');
+              },
+              loadingProgress: (double progress, _) {
+                // TODO: handle
+                print('Now Loading: $progress');
+              },
+            ),
+          ),
+        ),
+      ),
       title: Hero(
 //          createRectTween: shopDetailsPage.createRectTween,
           tag: "shopName" +
@@ -102,14 +116,7 @@ class PostHeader extends StatelessWidget {
 //
       ),
       onTap: () {
-        if (isHeaderClickable)
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (BuildContext context) => ShopDetailsPage(
-                        heroTag: index.toString(),
-                        shop: post.shop,
-                      )));
+		  if (selectShop != null) selectShop(index, post.shop, context);
       },
     );
   }

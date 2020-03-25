@@ -1,10 +1,11 @@
 import 'dart:async';
 
+import 'package:gotomobile/api.dart';
 import 'package:http/http.dart' as http;
 
-Future<http.Response> getShopBranches(int shopID) async {
-//  String token = await getAuthToken();
-
-//  return http.get(API.shopBranches + "/" + shopID.toString(),
-//      headers: {"Authorization": token}).timeout(Duration(seconds: 2));
+class BranchesService {
+  static Future<http.Response> getShopBranches(String token, int shopID) async {
+    return http.get(API.shopBranches + "/" + shopID.toString(),
+        headers: {"Authorization": token}).timeout(Duration(seconds: 2));
+  }
 }

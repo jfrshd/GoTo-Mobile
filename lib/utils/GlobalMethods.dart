@@ -45,7 +45,6 @@ class GlobalMethods {
   }
 
   static String formatDate(DateTime date) {
-    print(DateTime.now().difference(date).inDays);
     final diffDays = DateTime.now().difference(date).inDays;
     final diffHours = DateTime.now().difference(date).inHours;
     final diffMinutes = DateTime.now().difference(date).inMinutes;

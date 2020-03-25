@@ -70,6 +70,7 @@ class MyAppState extends State<MyApp> {
             fontFamily: 'ProductSans',
           ),
           home: SplashScreen(widget.store),
+          // TODO: kill shi yn3ml named route if possible
           routes: <String, WidgetBuilder>{
             Routes.categoriesRoute: (BuildContext context) =>
                 ChooseCategoriesPage(),

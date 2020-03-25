@@ -10,7 +10,7 @@ class AccountService {
       "email": Constants.authEmail,
       "password": Constants.authPassword,
       "remember_me": "true"
-    }).timeout(const Duration(seconds: 2));
+    }).timeout(const Duration(seconds: 5));
   }
 
   static Future<http.Response> updateFirebaseToken(

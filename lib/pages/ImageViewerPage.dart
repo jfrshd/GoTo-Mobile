@@ -1,8 +1,8 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:gotomobile/utils/GlobalMethods.dart';
+import 'package:gotomobile/widgets/image/CacheImage.dart';
 
 import '../api.dart';
 
@@ -38,45 +38,46 @@ class _ImageViewerPageState extends State<ImageViewerPage> {
                   API.serverAddress + "/" + widget.images[widget.selectedIndex],
                 );
               },
-                )
-            ],
+            )
+          ],
         ),
         body: Stack(
-            children: <Widget>[
-                Center(
-                    child: CarouselSlider.builder(
-                        aspectRatio: 1,
-                        scrollPhysics: const BouncingScrollPhysics(),
-                        enableInfiniteScroll: false,
-                        viewportFraction: 1.0,
-                        initialPage: widget.selectedIndex,
-                        itemCount: widget.images.length,
-                        itemBuilder: (BuildContext context, int index) =>
-                            CachedNetworkImage(
-                                imageUrl: API.serverAddress + "/" +
-                                    widget.images[index],
-                            ),
-                        onPageChanged: (index) {
-                            setState(() {
-                                widget.selectedIndex = index;
-                            });
-                        },
-                    ),
-                ),
-                Container(
-                    alignment: Alignment.bottomCenter,
-                    margin: EdgeInsets.only(bottom: 20),
-                    child: DotsIndicator(
-                        dotsCount: widget.images.length,
-                        position: widget.selectedIndex.toDouble(),
-                        decorator: DotsDecorator(
-                            size: const Size.square(9.0),
-                            activeSize: const Size(18.0, 9.0),
-                            activeShape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(5.0)),
-                        ),
-                    ))
-            ],
-        ));
+			children: <Widget>[
+				Center(
+					child: CarouselSlider.builder(
+						aspectRatio: 1,
+						scrollPhysics: const BouncingScrollPhysics(),
+						enableInfiniteScroll: false,
+						viewportFraction: 1.0,
+						initialPage: widget.selectedIndex,
+						itemCount: widget.images.length,
+						itemBuilder: (BuildContext context, int index) =>
+							CacheImage(
+								API.serverAddress + "/" + widget.images[index],
+								retryColor: Colors.grey[300],
+								backgroundColor: Colors.black,
+							),
+						onPageChanged: (index) {
+							setState(() {
+								widget.selectedIndex = index;
+							});
+						},
+					),
+				),
+				Container(
+					alignment: Alignment.bottomCenter,
+					margin: EdgeInsets.only(bottom: 20),
+					child: DotsIndicator(
+						dotsCount: widget.images.length,
+						position: widget.selectedIndex.toDouble(),
+						decorator: DotsDecorator(
+							size: const Size.square(9.0),
+							activeSize: const Size(18.0, 9.0),
+							activeShape: RoundedRectangleBorder(
+								borderRadius: BorderRadius.circular(5.0)),
+						),
+					))
+			],
+		));
   }
 }

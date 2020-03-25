@@ -1,6 +1,6 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:gotomobile/pages/ImageViewerPage.dart';
+import 'package:gotomobile/widgets/image/CacheImage.dart';
 
 import '../../api.dart';
 
@@ -15,34 +15,7 @@ class PostBodyImages extends StatelessWidget {
   Widget build(BuildContext context) {
     return images.length == 1
         ? InkWell(
-            child: CachedNetworkImage(
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.width,
-              imageUrl: API.serverAddress + "/" + images[0],
-              placeholder: (context, url) => SizedBox.fromSize(
-                size: Size(
-                  MediaQuery.of(context).size.width,
-                  MediaQuery.of(context).size.width,
-                ),
-                child: Container(
-                  color: Colors.grey[100],
-                  child: Center(child: CircularProgressIndicator()),
-                ),
-              ),
-              errorWidget: (context, url, error) => SizedBox.fromSize(
-                size: Size(
-                  MediaQuery.of(context).size.width,
-                  MediaQuery.of(context).size.width,
-                ),
-                child: Container(
-                  color: Colors.grey[100],
-                  child: Center(
-                    child: Icon(Icons.broken_image),
-                  ),
-                ),
-              ),
-              fit: BoxFit.fill,
-            ),
+		child: CacheImage(API.serverAddress + "/" + images[0]),
             onTap: () {
               Navigator.push(
                 context,
@@ -53,45 +26,28 @@ class PostBodyImages extends StatelessWidget {
             },
           )
         : SizedBox.fromSize(
-		size: Size(MediaQuery
-			.of(context)
-			.size
-			.width,
-			MediaQuery
-				.of(context)
-				.size
-				.width),
-		child: ListView.builder(
-			scrollDirection: Axis.horizontal,
-			itemCount: images.length,
-			itemBuilder: (BuildContext context, int index) {
-				return Container(
-					padding: EdgeInsets.fromLTRB(5, 0, 5, 0),
-					width: MediaQuery
-						.of(context)
-						.size
-						.width * 0.6,
-					child: InkWell(
-						child: CachedNetworkImage(
-							imageUrl: API.serverAddress + "/" + images[index],
-							placeholder: (context, url) =>
-								Center(child: CircularProgressIndicator()),
-							errorWidget: (context, url, error) =>
-								Icon(Icons.error),
-							fit: BoxFit.fill),
-						onTap: () {
-//                          toggleSearch();
-							Navigator.push(
-								context,
-								MaterialPageRoute(
-									builder: (context) =>
-										ImageViewerPage(
-											images, shopName, postDescription,
-											index)),
-							);
-						},
-					));
-			}),
-	);
+            size: Size(MediaQuery.of(context).size.width,
+                MediaQuery.of(context).size.width),
+            child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: images.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return Container(
+                      padding: EdgeInsets.fromLTRB(5, 0, 5, 0),
+                      width: MediaQuery.of(context).size.width * 0.6,
+                      child: InkWell(
+                        child:
+                            CacheImage(API.serverAddress + "/" + images[index]),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ImageViewerPage(
+                                    images, shopName, postDescription, index)),
+                          );
+                        },
+                      ));
+                }),
+          );
   }
 }
