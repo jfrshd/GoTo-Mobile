@@ -5,11 +5,13 @@ import 'package:gotomobile/pages/ChooseRegionsPage.dart';
 import 'package:gotomobile/pages/HomePage.dart';
 import 'package:gotomobile/pages/SplashScreen.dart';
 import 'package:gotomobile/redux/actions/account_actions.dart';
+import 'package:gotomobile/redux/actions/search_actions.dart';
 import 'package:gotomobile/redux/reducers/reducers.dart';
 import 'package:gotomobile/routes.dart';
 import 'package:gotomobile/utils/Constants.dart';
 import 'package:gotomobile/utils/SharedPreferencesHelper.dart';
 import 'package:redux/redux.dart';
+import 'package:redux_epics/redux_epics.dart';
 import 'package:redux_logging/redux_logging.dart';
 import 'package:redux_thunk/redux_thunk.dart';
 
@@ -21,9 +23,8 @@ final Store<AppState> store = Store<AppState>(
   initialState: AppState(),
   middleware: [
     thunkMiddleware,
-    new LoggingMiddleware.printer()
-//      SearchMiddleware(GithubClient()),
-//      EpicMiddleware<SearchState>(SearchEpic(GithubClient())),
+    new LoggingMiddleware.printer(),
+    new EpicMiddleware<AppState>(searchEpic),
   ],
 );
 

@@ -78,15 +78,15 @@ class ShopDetailsHeader extends StatelessWidget {
 									maxAge: const Duration(days: 7)),
 								loadedCallback: () {
 									// TODO: handle
-									print('It works!');
-								},
+//									//print('It works!');
+                        },
 								loadFailedCallback: () {
 									// TODO: handle
-									print('Oh, no!');
+//									//print('Oh, no!');
 								},
 								loadingProgress: (double progress, _) {
 									// TODO: handle
-									print('Now Loading: $progress');
+//									//print('Now Loading: $progress');
 								},
 							),
 						),

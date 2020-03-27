@@ -5,15 +5,16 @@ import 'package:gotomobile/models/shop.dart';
 import '../api.dart';
 
 class ShopItem extends StatelessWidget {
-  int index;
-  Shop shop;
+  final int index;
+  final Shop shop;
+  final void Function(int, Shop, BuildContext) selectShop;
 
-  ShopItem(this.index, this.shop);
+  ShopItem(this.index, this.shop, this.selectShop);
 
   @override
   Widget build(BuildContext context) {
     return Container(
-		padding: EdgeInsets.symmetric(horizontal: 5),
+      padding: EdgeInsets.symmetric(horizontal: 5),
       margin: EdgeInsets.fromLTRB(0, 5, 0, 0),
       color: Color(0xEEFFFFFF),
       child: Center(
@@ -36,15 +37,15 @@ class ShopItem extends StatelessWidget {
                   cacheRule: CacheRule(maxAge: const Duration(days: 7)),
                   loadedCallback: () {
                     // TODO: handle
-                    print('It works!');
+                    //print('It works!');
                   },
                   loadFailedCallback: () {
                     // TODO: handle
-                    print('Oh, no!');
+                    //print('Oh, no!');
                   },
                   loadingProgress: (double progress, _) {
                     // TODO: handle
-                    print('Now Loading: $progress');
+                    //print('Now Loading: $progress');
                   },
                 ),
               ),
@@ -57,14 +58,7 @@ class ShopItem extends StatelessWidget {
                 (shop.nbOfBranches == 1 ? "" : "es"),
           ),
           onTap: () {
-            // TODO: select shop action
-//            Navigator.push(
-//              context,
-//              MaterialPageRoute(
-//                builder: (BuildContext context) =>
-//                    ShopDetailsPage(heroTag: index.toString()),
-//              ),
-//            );
+            selectShop(index, shop, context);
           },
         ),
       ),

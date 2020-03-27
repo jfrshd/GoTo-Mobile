@@ -2,10 +2,14 @@ import 'dart:async';
 
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_redux/flutter_redux.dart';
 import 'package:gotomobile/pages/FiltersPage.dart';
+import 'package:gotomobile/redux/actions/search_actions.dart';
+import 'package:gotomobile/redux/states/app_state.dart';
 import 'package:gotomobile/widgets/PostsList.dart';
 import 'package:gotomobile/widgets/ShopsList.dart';
 import 'package:gotomobile/widgets/drawer/CustomDrawer.dart';
+import 'package:redux/redux.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -22,76 +26,26 @@ class _MainPageState extends State<HomePage> {
   bool delayEnded = false;
   bool forceFocus = false;
 
-  void initDynamicLinks() async {
-    final PendingDynamicLinkData data =
-        await FirebaseDynamicLinks.instance.getInitialLink();
-    final Uri deepLink = data?.link;
-
-    if (deepLink != null) {
-      Navigator.pushNamed(context, deepLink.path);
-    }
-
-    FirebaseDynamicLinks.instance.onLink(
-        onSuccess: (PendingDynamicLinkData dynamicLink) async {
-      final Uri deepLink = dynamicLink?.link;
-
-      if (deepLink != null) {
-        print("deepLink.path");
-        print(deepLink.path);
-        Navigator.pushNamed(context, deepLink.path);
-      }
-    }, onError: (OnLinkErrorException e) async {
-      print('onLinkError');
-      print(e.message);
-    });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-
-    this.initDynamicLinks();
-
-    _focusNode.addListener(() {
-      setState(() {
-        _isSearch = _focusNode.hasFocus;
-        if (!delayEnded) {
-          searchText = '';
-          forceFocus = true;
-          delayEnded = true;
-        }
-      });
-    });
-    Future.delayed(const Duration(milliseconds: 5000), () {
-      setState(() {
-        searchText = '';
-        delayEnded = true;
-      });
-    });
-  }
-
-  @override
-  void dispose() {
-    _focusNode.dispose();
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: _onWillPop,
-      child: Scaffold(
-        backgroundColor: Colors.grey[300],
-        drawer: CustomDrawer(),
-        appBar: _createAppBar(),
-        body: _isSearch
-            ? new ShopsList(searchText)
-            : _isFilter ? new FiltersPage() : new PostsList(),
-      ),
-    );
+    return StoreConnector<AppState, _ViewModel>(converter: (store) {
+      return _ViewModel.fromStore(store);
+    }, builder: (BuildContext context, _ViewModel vm) {
+      return WillPopScope(
+        onWillPop: _onWillPop,
+        child: Scaffold(
+          backgroundColor: Colors.grey[300],
+          drawer: CustomDrawer(),
+          appBar: _createAppBar(vm),
+          body: _isSearch
+              ? new ShopsList()
+              : _isFilter ? new FiltersPage() : new PostsList(),
+        ),
+      );
+    });
   }
 
-  AppBar _createAppBar() {
+  AppBar _createAppBar(_ViewModel vm) {
     return AppBar(
       automaticallyImplyLeading: true,
       centerTitle: true,
@@ -181,9 +135,7 @@ class _MainPageState extends State<HomePage> {
                                           // TODO: onSubmit
                                         },
                                         onChanged: (text) {
-                                          setState(() {
-                                            searchText = text;
-                                          });
+                                          vm.search(text);
                                         },
                                       ),
                                     ),
@@ -223,21 +175,70 @@ class _MainPageState extends State<HomePage> {
                     ),
                     onPressed: () {
                       Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (BuildContext context) =>
-                                  FiltersPage()));
-//                      setState(() {
-//                        _isFilter = true;
-//                        delayEnded = true;
-//                      });
+                        context,
+                        MaterialPageRoute(
+                          builder: (BuildContext context) => FiltersPage(),
+                        ),
+                      );
                     },
-                  ),
+        ),
       ],
     );
   }
 
-///////////////////////////////////////////////////////////////////////////////////
+  void initDynamicLinks() async {
+    final PendingDynamicLinkData data =
+    await FirebaseDynamicLinks.instance.getInitialLink();
+    final Uri deepLink = data?.link;
+
+    if (deepLink != null) {
+      Navigator.pushNamed(context, deepLink.path);
+    }
+
+    FirebaseDynamicLinks.instance.onLink(
+        onSuccess: (PendingDynamicLinkData dynamicLink) async {
+          final Uri deepLink = dynamicLink?.link;
+
+          if (deepLink != null) {
+            print("deepLink.path");
+            print(deepLink.path);
+            Navigator.pushNamed(context, deepLink.path);
+          }
+        }, onError: (OnLinkErrorException e) async {
+      print('onLinkError');
+      print(e.message);
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    this.initDynamicLinks();
+
+    _focusNode.addListener(() {
+      setState(() {
+        _isSearch = _focusNode.hasFocus;
+        if (!delayEnded) {
+          searchText = '';
+          forceFocus = true;
+          delayEnded = true;
+        }
+      });
+    });
+    Future.delayed(const Duration(milliseconds: 5000), () {
+      setState(() {
+        searchText = '';
+        delayEnded = true;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _focusNode.dispose();
+    super.dispose();
+  }
 
   void _toggleSearch() {
     setState(() {
@@ -256,5 +257,23 @@ class _MainPageState extends State<HomePage> {
     } else {
       return true;
     }
+  }
+}
+
+class _ViewModel {
+  final void Function(String) search;
+
+  _ViewModel({
+    @required this.search,
+  });
+
+  static _ViewModel fromStore(Store<AppState> store) {
+    return _ViewModel(
+      search: (searchTerm) {
+        store.dispatch(CancelSearchAction());
+        store.dispatch(SearchingAction(searchTerm));
+        store.dispatch(PerformSearchAction(searchTerm));
+      },
+    );
   }
 }

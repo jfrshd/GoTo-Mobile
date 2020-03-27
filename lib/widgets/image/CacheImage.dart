@@ -22,13 +22,13 @@ class CacheImage extends StatelessWidget {
         useDiskCache: true,
         cacheRule: CacheRule(maxAge: const Duration(days: 7)),
         loadedCallback: () {
-          print('It works!');
+          //print('It works!');
         },
         loadFailedCallback: () {
-          print('Oh, no!');
+			//print('Oh, no!');
         },
         loadingProgress: (double progress, _) {
-          print('Now Loading: $progress');
+			//print('Now Loading: $progress');
         },
       ),
       fit: BoxFit.fill,

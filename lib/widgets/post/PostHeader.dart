@@ -38,15 +38,15 @@ class PostHeader extends StatelessWidget {
               cacheRule: CacheRule(maxAge: const Duration(days: 7)),
               loadedCallback: () {
                 // TODO: handle
-                print('It works!');
+                //print('It works!');
               },
               loadFailedCallback: () {
-                // TODO: handle
-                print('Oh, no!');
+                  // TODO: handle
+                  //print('Oh, no!');
               },
               loadingProgress: (double progress, _) {
-                // TODO: handle
-                print('Now Loading: $progress');
+                  // TODO: handle
+                  //print('Now Loading: $progress');
               },
             ),
           ),
