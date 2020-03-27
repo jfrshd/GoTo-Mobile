@@ -36,6 +36,8 @@ dependencies:
   intl: ^0.16.1
   carousel_slider: ^1.4.1
   stack_overlay: ^0.1.1
+  retry: ^3.0.0+1
+  flutter_launcher_icons: ^0.7.4
 
   flutter_redux: ^0.6.0
   async: ^2.4.0
@@ -43,6 +45,7 @@ dependencies:
   rxdart: ^0.23.1
   redux_thunk: ^0.3.0
   redux_logging: ^0.4.0
+
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -60,6 +63,10 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
+flutter_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/icon.png"
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

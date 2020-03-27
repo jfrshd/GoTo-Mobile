@@ -13,7 +13,7 @@ class SearchState {
     this.loading = false,
     this.failLoad = false,
     this.errorLoad = false,
-    this.searchTerm = '',
+    this.searchTerm = 'GoTo',
     this.shops = const [],
   });
 
@@ -27,13 +27,14 @@ class SearchState {
     );
   }
 
-  dynamic toJson() => {
-        'loading': loading,
-        'failLoad': failLoad,
-        'errorLoad': errorLoad,
-        'searchTerm': searchTerm,
-        'shops': shops,
-      };
+  dynamic toJson() =>
+	  {
+		  'loading': loading,
+		  'failLoad': failLoad,
+		  'errorLoad': errorLoad,
+		  'searchTerm': searchTerm,
+		  'shops': shops.length,
+	  };
 
   @override
   String toString() {

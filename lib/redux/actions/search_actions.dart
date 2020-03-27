@@ -13,6 +13,8 @@ class PerformSearchAction {
   PerformSearchAction(this.searchTerm);
 }
 
+class EmptySearchAction {}
+
 class SuccessSearchAction {
   final List<Shop> shopsPayload;
 
@@ -42,9 +44,6 @@ Stream<dynamic> searchEpic(Stream<dynamic> actions, EpicStore<AppState> store) {
       // discarded.
       // This prevents your app from showing stale results.
       .switchMap((action) {
-    if (action.searchTerm == '')
-      return Stream.fromFuture(new Future(() => SuccessSearchAction([])));
-
     return Stream.fromFuture(ShopsService.searchShops(
                 store.state.account.authToken, action.searchTerm)
             .then((response) {

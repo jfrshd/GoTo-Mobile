@@ -45,8 +45,8 @@ class ShopPostState {
         'errorLoad': errorLoad,
         'moreToLoad': moreToLoad,
         'errorLoadingMore': errorLoadingMore,
-        'currentPages': currentPages,
-        'shopPosts': shopPosts,
+        'currentPages': currentPages.values.toList(),
+        'shopPosts': shopPosts.values.toList(),
       };
 
   @override

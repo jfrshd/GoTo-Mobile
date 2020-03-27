@@ -1,3 +1,4 @@
+import 'package:gotomobile/redux/reducers/home_appbar_reducer.dart';
 import 'package:gotomobile/redux/reducers/post_reducer.dart';
 import 'package:gotomobile/redux/reducers/search_reducer.dart';
 import 'package:gotomobile/redux/reducers/shop_branch_reducer.dart';
@@ -19,4 +20,5 @@ AppState appReducer(AppState state, action) => AppState(
       shopBranchState: shopBranchReducer(state.shopBranchState, action),
       shopPostState: shopPostReducer(state.shopPostState, action),
       searchState: searchReducer(state.searchState, action),
+      homeState: homeAppBarReducer(state.homeState, action),
     );

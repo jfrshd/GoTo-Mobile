@@ -61,8 +61,12 @@ class _SplashScreenState extends State<SplashScreen> {
         }
         return Scaffold(
           body: Container(
-            width: MediaQuery.of(context).size.width,
-            color: Theme.of(context).primaryColor,
+            width: MediaQuery
+                .of(context)
+                .size
+                .width,
+//            color: Theme.of(context).primaryColor,
+            color: Colors.white,
             child: Stack(
               children: <Widget>[
                 Positioned(
@@ -72,18 +76,15 @@ class _SplashScreenState extends State<SplashScreen> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
-                          Text(
-                            'GoTo',
-                            style: TextStyle(
-                              fontSize: 50,
-                              color: Colors.blue[100],
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-//                          Container(
-//                            margin: EdgeInsets.only(top: 30),
-//                            child: CircularProgressIndicator(
-//                              backgroundColor: Colors.white,
+                          SizedBox.fromSize(
+                              size: Size(200, 200),
+                              child: Image.asset("assets/icon.png")),
+//                          Text(
+//                            'GoTo',
+//                            style: TextStyle(
+//                              fontSize: 50,
+//                              color: Colors.blue[100],
+//                              fontWeight: FontWeight.bold,
 //                            ),
 //                          ),
                         ],
@@ -100,7 +101,8 @@ class _SplashScreenState extends State<SplashScreen> {
                         'Powered by IBDAA',
                         style: TextStyle(
                           fontSize: 20,
-                          color: Colors.blue[300],
+//                          color: Colors.blue[300],
+                          color: Colors.black,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
