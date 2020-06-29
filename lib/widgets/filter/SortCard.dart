@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:gotomobile/models/filter.dart';
 import 'package:gotomobile/widgets/Filter/SortItem.dart';
 
 class SortCard extends StatefulWidget {
+  final List<Filter> sortTypes;
+  final void Function(List<Filter>, int) saveSortTypes;
+
+  SortCard(this.sortTypes, this.saveSortTypes);
+
   @override
   _SortCardState createState() => _SortCardState();
 }
 
 class _SortCardState extends State<SortCard> {
-  List sortTypes = [
-    {'title': 'Date Posted', 'selected': true},
-    {'title': 'Sale Percentage', 'selected': false},
-    {'title': 'Date Begin', 'selected': false},
-  ];
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -30,23 +30,20 @@ class _SortCardState extends State<SortCard> {
           ),
           Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: sortTypes
-                  .asMap()
-                  .entries
-                  .map((entry) => GestureDetector(
-                      onTap: () => onTap(entry.key),
-                      child: SortItem(entry.value)))
-                  .toList())
+			  children: widget.sortTypes
+				  .asMap()
+				  .entries
+				  .map((entry) =>
+				  GestureDetector(
+					  onTap: () => onTap(entry.key),
+					  child: SortItem(entry.value)))
+				  .toList())
         ]),
       ),
     );
   }
 
   onTap(int index) {
-    print('onTap ' + index.toString());
-    setState(() {
-      sortTypes = sortTypes.map((e) => {...e, 'selected': false}).toList();
-      sortTypes[index]['selected'] = true;
-    });
+	  widget.saveSortTypes(widget.sortTypes, index);
   }
 }

@@ -5,6 +5,7 @@ import 'package:gotomobile/pages/ChooseRegionsPage.dart';
 import 'package:gotomobile/pages/HomePage.dart';
 import 'package:gotomobile/pages/SplashScreen.dart';
 import 'package:gotomobile/redux/actions/account_actions.dart';
+import 'package:gotomobile/redux/actions/filter_actions.dart';
 import 'package:gotomobile/redux/actions/search_actions.dart';
 import 'package:gotomobile/redux/reducers/reducers.dart';
 import 'package:gotomobile/routes.dart';
@@ -16,6 +17,7 @@ import 'package:redux_logging/redux_logging.dart';
 import 'package:redux_thunk/redux_thunk.dart';
 
 import 'Pages/ChooseCategoriesPage.dart';
+import 'models/filter.dart';
 import 'redux/states/app_state.dart';
 
 final Store<AppState> store = Store<AppState>(
@@ -45,10 +47,21 @@ class MyApp extends StatefulWidget {
 
 class MyAppState extends State<MyApp> {
   init() async {
-    store.dispatch(authenticateAction());
+	  store.dispatch(authenticateAction());
 
     store.dispatch(ToggleFirstLaunchAction(
         await SharedPreferencesHelper.getBool(Constants.firstTimeCode)));
+
+    store.dispatch(SaveFilterSortTypeAction([
+      Filter(title: 'Date Posted', selected: false),
+      Filter(title: 'Sale Percentage', selected: false),
+      Filter(title: 'Date Start', selected: false),
+    ], 0));
+    store.dispatch(SaveFilterPostTypesAction([
+      Filter(id: 1, title: 'Sale', selected: false),
+      Filter(id: 2, title: 'New Collection', selected: true),
+      Filter(id: 3, title: 'Flier', selected: true),
+    ], 0));
   }
 
   @override

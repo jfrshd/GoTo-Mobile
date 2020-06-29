@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:gotomobile/models/filter.dart';
 
 class SortItem extends StatelessWidget {
-  final sortType;
+	final Filter sortType;
 
   SortItem(this.sortType);
 
@@ -13,17 +14,17 @@ class SortItem extends StatelessWidget {
         borderRadius: BorderRadius.all(
           Radius.circular(5),
         ),
-        color: sortType['selected']
-            ? Theme.of(context).primaryColor
-            : Colors.white,
+        color:
+            sortType.selected ? Theme.of(context).primaryColor : Colors.white,
       ),
       child: Text(
-        sortType['title'],
-        style: TextStyle(
-          color: sortType['selected']
-              ? Colors.white
-              : Theme.of(context).primaryColor,
-        ),
+		  sortType.title,
+		  style: TextStyle(
+			  color:
+			  sortType.selected ? Colors.white : Theme
+				  .of(context)
+				  .primaryColor,
+		  ),
       ),
     );
   }

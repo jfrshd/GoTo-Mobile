@@ -10,6 +10,8 @@ import 'package:gotomobile/utils/SharedPreferencesHelper.dart';
 import 'package:redux/redux.dart';
 import 'package:redux_thunk/redux_thunk.dart';
 
+import 'filter_actions.dart';
+
 class SuccessCategoriesAction {
   final bool fromSharedPref;
   final List<Category> categoriesPayload;
@@ -37,22 +39,24 @@ ThunkAction<AppState> fetchCategoriesAction() {
     var _json =
         await SharedPreferencesHelper.getString(Constants.categoriesCode);
     if (_json.isNotEmpty) {
-      var parsed = json.decode(_json);
-      parsed = Map<String, dynamic>.from(
-          json.decode("{\"categories\":" + parsed + "}"));
-      final categories = parsed['categories']
-          .map<Category>((json) => Category.fromJson(json))
-          .toList();
-      store.dispatch(SuccessCategoriesAction(true, categories));
+		var parsed = json.decode(_json);
+		parsed = Map<String, dynamic>.from(
+			json.decode("{\"categories\":" + parsed + "}"));
+		final categories = parsed['categories']
+			.map<Category>((json) => Category.fromJson(json))
+			.toList();
+		store.dispatch(SuccessCategoriesAction(true, categories));
+		store.dispatch(AddCategoriesToFilterStateAction(categories));
     } else
       CategoriesService.fetchCategories(store.state.account.authToken)
           .then((response) {
         final parsed = Map<String, dynamic>.from(json.decode(response.body));
         if (parsed["status"] == "success") {
-          final categories = parsed['categories']
-              .map<Category>((json) => Category.fromJson(json))
-              .toList();
-          store.dispatch(SuccessCategoriesAction(false, categories));
+			final categories = parsed['categories']
+				.map<Category>((json) => Category.fromJson(json))
+				.toList();
+			store.dispatch(SuccessCategoriesAction(false, categories));
+			store.dispatch(AddCategoriesToFilterStateAction(categories));
         } else if (parsed["status"] == "fail") {
           store.dispatch(FailLoadCategoriesAction());
         } else if (parsed["status"] == "error") {}

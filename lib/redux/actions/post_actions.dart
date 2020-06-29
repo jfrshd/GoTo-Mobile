@@ -22,12 +22,19 @@ class ToggleMorePostsToLoadAction {}
 
 class ErrorLoadingMorePostsAction {}
 
-ThunkAction<AppState> fetchPostsAction() {
+ThunkAction<AppState> fetchPostsAction(bool favorites) {
   return (Store<AppState> store) async {
     store.dispatch(LoadingPostsAction());
+
     final currentPage = store.state.postState.currentPage;
-    PostsService.fetchPosts(store.state.account.authToken, page: currentPage)
-        .then((response) {
+
+    PostsService.fetchPosts(
+      store.state.account.authToken,
+      filterState: store.state.filterState,
+      page: currentPage,
+      accountId: store.state.account.accountID,
+      favorites: favorites,
+    ).then((response) {
       final parsed = Map<String, dynamic>.from(json.decode(response.body));
       if (parsed["status"] == "success") {
         final posts = parsed['posts']['data']

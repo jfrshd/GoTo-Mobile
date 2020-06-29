@@ -117,7 +117,7 @@ class PostsList extends StatelessWidget {
     }
 
     if (_scrollController.offset <=
-        _scrollController.position.minScrollExtent &&
+            _scrollController.position.minScrollExtent &&
         !_scrollController.position.outOfRange) {
       print("reach the top");
     }
@@ -157,7 +157,8 @@ class _ViewModel {
           (Shop shop, GlobalKey<RefreshIndicatorState> _refreshIndicatorKey) {
         _refreshIndicatorKey.currentState?.show();
         shop == null
-            ? store.dispatch(fetchPostsAction())
+            ? store.dispatch(
+            fetchPostsAction(store.state.shopPostState.moreToLoad))
             : store.dispatch(fetchShopPostsAction(shopID: shop.id));
         return new Future<void>(() {});
       },

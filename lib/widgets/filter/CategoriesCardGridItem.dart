@@ -33,7 +33,8 @@ class CategoriesCardGridItem extends StatelessWidget {
               size: Size(40, 40),
               child: SvgPicture.network(
                 API.serverAddress + "/" + category.thumbnail,
-                placeholderBuilder: (context) => CircularProgressIndicator(),
+                placeholderBuilder: (context) =>
+                    Center(child: CircularProgressIndicator()),
               ),
             ),
           ),

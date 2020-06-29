@@ -191,11 +191,11 @@ class _ChooseCategoriesPageState extends State<ChooseCategoriesPage> {
   }
 
   void showError(String e) {
-	  final snackBar = SnackBar(
-		  content: Text(e),
-		  duration: Duration(seconds: 2),
-	  );
-	  _scaffoldKey.currentState.showSnackBar(snackBar);
+    final snackBar = SnackBar(
+      content: Text(e),
+      duration: Duration(seconds: 2),
+    );
+    _scaffoldKey.currentState.showSnackBar(snackBar);
   }
 
   void showChooseAtLeastThree() {

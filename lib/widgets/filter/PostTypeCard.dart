@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:gotomobile/models/filter.dart';
 import 'package:gotomobile/widgets/Filter/SortItem.dart';
 
 class PostTypeCard extends StatefulWidget {
+  final List<Filter> postTypes;
+  final void Function(List<Filter>, int) savePostTypes;
+
+  PostTypeCard(this.postTypes, this.savePostTypes);
+
   @override
   _PostTypeCardState createState() => _PostTypeCardState();
 }
 
 class _PostTypeCardState extends State<PostTypeCard> {
-  List sortTypes = [
-    {'title': 'Sale', 'selected': true},
-    {'title': 'New Collection', 'selected': true},
-    {'title': 'Flyer', 'selected': true},
-  ];
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -30,13 +30,14 @@ class _PostTypeCardState extends State<PostTypeCard> {
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: sortTypes
-                .asMap()
-                .entries
-                .map((entry) => GestureDetector(
-                    onTap: () => onTap(entry.key),
-                    child: SortItem(entry.value)))
-                .toList(),
+			  children: widget.postTypes
+				  .asMap()
+				  .entries
+				  .map((entry) =>
+				  GestureDetector(
+					  onTap: () => onTap(entry.key),
+					  child: SortItem(entry.value)))
+				  .toList(),
           )
         ]),
       ),
@@ -44,8 +45,6 @@ class _PostTypeCardState extends State<PostTypeCard> {
   }
 
   onTap(int index) {
-    setState(() {
-      sortTypes[index]['selected'] = !sortTypes[index]['selected'];
-    });
+	  widget.savePostTypes(widget.postTypes, index);
   }
 }

@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:gotomobile/models/account.dart';
 import 'package:gotomobile/redux/states/post_state.dart';
 import 'package:gotomobile/redux/states/region_state.dart';
@@ -10,11 +8,12 @@ import 'package:gotomobile/redux/states/shop_state.dart';
 import 'package:gotomobile/redux/states/states.dart';
 import 'package:meta/meta.dart';
 
+import 'filter_state.dart';
 import 'home_appbar_state.dart';
 
 @immutable
 class AppState {
-  final bool switchingSplashScreen;
+	final bool switchingSplashScreen;
   final Account account;
   final CategoryState categoryState;
   final RegionState regionState;
@@ -24,6 +23,7 @@ class AppState {
   final ShopPostState shopPostState;
   final SearchState searchState;
   final HomeState homeState;
+  final FilterState filterState;
 
   const AppState({
     this.switchingSplashScreen = false,
@@ -36,25 +36,27 @@ class AppState {
     this.shopPostState = const ShopPostState(),
     this.searchState = const SearchState(),
     this.homeState = const HomeState(),
+    this.filterState = const FilterState(),
   });
 
 	dynamic toJson() =>
 		{
 //        'switchingSplashScreen': switchingSplashScreen,
 //        'account': account,
-//        'categoryState': categoryState,
+//        'categoryState': categoryState.categories.length,
 //        'regionState': regionState,
 //        'postState': postState,
 //        'shopState': shopState,
 //        'shopBranchState': shopBranchState,
 //        'shopPostState': shopPostState,
-			'searchState': searchState,
-			'homeState': homeState,
+//        'searchState': searchState,
+//        'homeState': homeState,
+			'filterState': filterState,
 		};
 
 	@override
 	String toString() {
 		return 'AppState';
-		return 'AppState: ${JsonEncoder.withIndent('  ').convert(this)}';
+//    return 'AppState: ${JsonEncoder.withIndent('  ').convert(this)}';
 	}
 }
